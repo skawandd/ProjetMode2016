@@ -9,7 +9,7 @@ public class MainClass {
 		HashMap<Integer, Integer> data = new HashMap<Integer, Integer>();
 		try{
 			if((data = csv.decodeCsv()) == null){
-				System.out.println("error decoding csv");
+				System.out.println("erreur en decodant le csv");
 				return;
 			}
 		}catch(IOException e){
@@ -17,7 +17,7 @@ public class MainClass {
 			return;
 		}
 		for(Integer i : data.keySet()){
-			System.out.println("clé :" + i + " valeur :"+data.get(i));
+			System.out.println("cle :" + i + " valeur :"+data.get(i));
 		}
 	}
 }
