@@ -1,5 +1,9 @@
+import java.io.BufferedReader;
 import java.io.File;
-import java.util.Map;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
 
 /**
  * 
@@ -16,10 +20,24 @@ public class CSVDecoder {
 	
 	/**
 	 * 
-	 * @return une Map associant une valeur a une date.
+	 * @return une Map associant une valeur a une date. null si le fichier ne peut etre lu.
 	 */
-	public Map<Integer, Integer> decodeCsv(){
-		return null;
+	public HashMap<Integer, Integer> decodeCsv() throws IOException{
+		String elems[];
+		String line;
+		FileInputStream fis;
+		HashMap<Integer, Integer> CSV = new HashMap<Integer, Integer>();
+		if(!file.canRead()) return null;
+		fis = new FileInputStream(file);
+		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+		while((line = br.readLine()) != null){
+			elems = line.split(",");
+			if(elems.length == 2){
+				CSV.put(Integer.parseInt(elems[0]), Integer.parseInt(elems[1]));
+			}
+		}
+		br.close();
+		return CSV;
 	}
 	
 	/**
@@ -27,7 +45,9 @@ public class CSVDecoder {
 	 * @param colonne
 	 * @return la colonne pour laquelle on veut les donnees.
 	 */
-	public int[] getColonne(int colonne){
+	public Integer[] getColonne(int colonne) throws IOException{
+		if(colonne == 1)return decodeCsv().keySet().toArray(new Integer[0]);
+		else if(colonne == 2) return decodeCsv().values().toArray(new Integer[0]);
 		return null;
 	}
 	
