@@ -4,8 +4,9 @@ import java.util.HashMap;
 
 public class MainClass {
 	public static void main(String[] args){
-		// TODO compatibilite linux.
-		CSVDecoder csv = new CSVDecoder(new File("bin\\\\valeurs.csv"));
+		
+		String path = Compatibilite.getPath("bin/valeurs.csv");
+		CSVDecoder csv = new CSVDecoder(new File(path));
 		HashMap<Integer, Integer> data = new HashMap<Integer, Integer>();
 		try{
 			if((data = csv.decodeCsv()) == null){
