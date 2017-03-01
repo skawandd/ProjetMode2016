@@ -15,16 +15,16 @@ import javafx.stage.Stage;
 public class DrawCourbe {
  
     public void afficherCourbe(Stage stage, HashMap<String,Integer> data) {
-        stage.setTitle("Line Chart Sample");
+        stage.setTitle("Resultat annalyse");
         //defining the axes
         final CategoryAxis xAxis = new CategoryAxis();
         final NumberAxis yAxis = new NumberAxis();
-        xAxis.setLabel("Month");       
+        xAxis.setLabel("Date");       
         
         final LineChart<String,Number> lineChart = 
                 new LineChart<String,Number>(xAxis,yAxis);
                 
-        lineChart.setTitle("Stock Monitoring, 2010");
+        lineChart.setTitle("Bourse");
                                 
         XYChart.Series series = new XYChart.Series();
         series.setName("Serie 1");
