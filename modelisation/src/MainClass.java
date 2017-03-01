@@ -1,24 +1,16 @@
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.stage.Stage;
 
-public class MainClass {
+public class MainClass extends Application{
 	public static void main(String[] args){
-		
-		String path = Compatibilite.getPath("bin/valeurs.csv");
-		CSVDecoder csv = new CSVDecoder(new File(path));
-		HashMap<String, Integer> data = new HashMap<String, Integer>();
-		try{
-			if((data = csv.decodeCsv()) == null){
-				System.out.println("erreur en decodant le csv");
-				return;
-			}
-		}catch(IOException e){
-			System.out.println("IO exception");
-			return;
-		}
-		for(String i : data.keySet()){
-			System.out.println("cle :" + i + " valeur :"+data.get(i));
-		}
+		launch(args);
+	}
+
+	@Override
+	public void start(Stage primaryStage) {
+		VueTerminal term = new VueTerminal(primaryStage);
+		term.lancer();
+		Platform.exit();
 	}
 }
