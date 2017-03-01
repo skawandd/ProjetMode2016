@@ -7,7 +7,7 @@ public class MainClass {
 		
 		String path = Compatibilite.getPath("bin/valeurs.csv");
 		CSVDecoder csv = new CSVDecoder(new File(path));
-		HashMap<Integer, Integer> data = new HashMap<Integer, Integer>();
+		HashMap<String, Integer> data = new HashMap<String, Integer>();
 		try{
 			if((data = csv.decodeCsv()) == null){
 				System.out.println("erreur en decodant le csv");
@@ -17,7 +17,7 @@ public class MainClass {
 			System.out.println("IO exception");
 			return;
 		}
-		for(Integer i : data.keySet()){
+		for(String i : data.keySet()){
 			System.out.println("cle :" + i + " valeur :"+data.get(i));
 		}
 	}
