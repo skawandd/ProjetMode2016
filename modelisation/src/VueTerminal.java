@@ -6,15 +6,19 @@ import java.util.Observer;
 import java.util.Scanner;
 
 import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class VueTerminal implements Observer {
 
 	private ArrayList<Serie> series;
 	private Stage stage;
+	private Scene scene;
 
 	public VueTerminal(Stage stage) {
 		this.stage = stage;
+		scene = new Scene(new VBox(),800,600);
 		series = new ArrayList<Serie>();
 	}
 
@@ -45,9 +49,9 @@ public class VueTerminal implements Observer {
 	}
 
 	private void afficherMenu() {
-		System.out.println("1) Charger une serie d'un fichier csv");
+		System.out.println("\n1) Charger une serie d'un fichier csv");
 		System.out.println("2) Lister les series charges");
-		System.out.println("3) Afficher une serie");
+		System.out.println("3) Afficher une ou des serie(s)");
 		System.out.println("4) Effectuer une transformation");
 		System.out.println("5) Effectuer une moyenne mobile d'ordre h");
 		System.out.println("6) Calculer les residus entre une serie de depart et une serie lissee");
@@ -59,10 +63,24 @@ public class VueTerminal implements Observer {
 			System.out.println(i + ") " + series.get(i - 1).getNom());
 		}
 	}
-
-	private void afficherChoixSerie() {
+	
+	private int afficherChoixSerie(){
 		System.out.println("Choisissez une serie parmis la liste ci dessous:");
 		afficherSeries();
+		return getChoix(1, series.size());
+	}
+
+	private GraphModel traiterChoixSerie() {
+		GraphModel gm = new GraphModel();
+		int choix, ajouter = 1;
+		while(ajouter == 1){
+			choix = afficherChoixSerie();
+			gm.addSerie(series.get(choix -1));
+			System.out.println("Ajouter une serie ?\n1) Oui\n2) Non, afficher\n3) Annuler");
+			ajouter = getChoix(1, 3);
+		}
+		if(ajouter == 3) return null;
+		else return gm;
 	}
 
 	private int traiter(int choix) {
@@ -79,10 +97,15 @@ public class VueTerminal implements Observer {
 			afficherSeries();
 			break;
 		case 3:
-			afficherChoixSerie();
 			if(series.size() > 0){
-				DrawCourbe.afficherCourbe(stage, series.get(getChoix(1, series.size()) - 1).getSerie());
-				return 0;
+				GraphModel gm = traiterChoixSerie();
+				if(gm != null){
+					stage.setTitle("Resultat annalyse");
+					DrawCourbe dc = new DrawCourbe(scene);
+					gm.addObserver(dc);
+					gm.release();
+					return 0;
+				}
 			}else
 				System.out.println("Aucun serie charge");
 			break;
