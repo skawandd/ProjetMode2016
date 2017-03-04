@@ -11,6 +11,5 @@ public class MainClass extends Application{
 	public void start(Stage primaryStage) {
 		VueTerminal term = new VueTerminal(primaryStage);
 		term.lancer();
-		Platform.exit();
 	}
 }

@@ -80,9 +80,10 @@ public class VueTerminal implements Observer {
 			break;
 		case 3:
 			afficherChoixSerie();
-			if(series.size() > 0)
+			if(series.size() > 0){
 				DrawCourbe.afficherCourbe(stage, series.get(getChoix(1, series.size()) - 1).getSerie());
-			else
+				return 0;
+			}else
 				System.out.println("Aucun serie charge");
 			break;
 		case 7:
