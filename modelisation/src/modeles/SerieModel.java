@@ -21,6 +21,14 @@ public class SerieModel extends Observable implements Observer{
 		this.notifyObservers(s);
 	}
 	
+	public void addSerieFromUrl(String url){
+		
+	}
+	
+	private void organise(){
+		
+	}
+	
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		// TODO Auto-generated method stub
