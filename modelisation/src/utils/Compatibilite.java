@@ -1,8 +1,9 @@
+package utils;
 
 public class Compatibilite {
 	
 	
-	private static String getOs(){
+	public static String getOs(){
 		String os = System.getProperty("os.name").toLowerCase();
 		if(os.indexOf("nix") >=0 ) return "linux";
 		else if(os.indexOf("win") >= 0) return "windows";

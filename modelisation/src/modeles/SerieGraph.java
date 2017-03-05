@@ -1,3 +1,4 @@
+package modeles;
 
 public class SerieGraph{
 

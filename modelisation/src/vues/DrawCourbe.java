@@ -1,3 +1,4 @@
+package vues;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
@@ -9,11 +10,12 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
+import modeles.Serie;
+import modeles.SerieGraph;
 
 public class DrawCourbe implements Observer{
  
 	Scene scene;
-	ArrayList<Serie> series;
 	
 	public DrawCourbe(Scene scene){
 		this.scene = scene;
@@ -34,10 +36,15 @@ public class DrawCourbe implements Observer{
         scene.setRoot(lineChart);
         lineChart.getData().add(series);*/
     }
+    
+    public void updateCourbe(SerieGraph sg){
+    	
+    }
 
 	@Override @SuppressWarnings("unchecked")
 	public void update(Observable arg0, Object arg1) {
-		this.afficherCourbe((ArrayList<SerieGraph>)arg1);
+		if(arg1 instanceof ArrayList<?>) this.afficherCourbe((ArrayList<SerieGraph>)arg1);
+		else if(arg1 instanceof SerieGraph) this.updateCourbe((SerieGraph)arg1);
 	}
  
 }

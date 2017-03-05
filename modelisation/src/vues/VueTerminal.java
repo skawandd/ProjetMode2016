@@ -1,30 +1,33 @@
+package vues;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Scanner;
-
-import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import modeles.GraphModel;
+import modeles.Serie;
+import utils.FileExplorer;
+import modeles.SerieModel;
 
 public class VueTerminal implements Observer {
 
-	private ArrayList<Serie> series;
+	private SerieModel sm;
 	private Stage stage;
 	private Scene scene;
 
 	public VueTerminal(Stage stage) {
 		this.stage = stage;
 		scene = new Scene(new VBox(),800,600);
-		series = new ArrayList<Serie>();
+		sm = new SerieModel();
 	}
 
 	public void lancer() {
 		this.afficherMenu();
-		while (traiter(getChoix(1, 7)) != 0) {
+		while (traiterGlobal(getChoix(1, 7)) != 0) {
 			this.afficherMenu();
 		}
 		System.out.println("A bientot");
@@ -59,15 +62,16 @@ public class VueTerminal implements Observer {
 	}
 
 	private void afficherSeries() {
-		for (int i = 1; i <= series.size(); i++) {
-			System.out.println(i + ") " + series.get(i - 1).getNom());
+		ArrayList<Serie> s = sm.getSeries();
+		for (int i = 1; i <= s.size(); i++) {
+			System.out.println(i + ") " + s.get(i - 1).getNom());
 		}
 	}
 	
 	private int afficherChoixSerie(){
 		System.out.println("Choisissez une serie parmis la liste ci dessous:");
 		afficherSeries();
-		return getChoix(1, series.size());
+		return getChoix(1, sm.getSeries().size());
 	}
 
 	private GraphModel traiterChoixSerie() {
@@ -75,7 +79,7 @@ public class VueTerminal implements Observer {
 		int choix, ajouter = 1;
 		while(ajouter == 1){
 			choix = afficherChoixSerie();
-			gm.addSerie(series.get(choix -1));
+			gm.addSerie(sm.getSeries().get(choix -1));
 			System.out.println("Ajouter une serie ?\n1) Oui\n2) Non, afficher\n3) Annuler");
 			ajouter = getChoix(1, 3);
 		}
@@ -83,21 +87,20 @@ public class VueTerminal implements Observer {
 		else return gm;
 	}
 
-	private int traiter(int choix) {
+	private int traiterGlobal(int choix) {
 		switch (choix) {
 		case 1:
 			File file = FileExplorer.getFile();
 			// TODO replacer avec une exception si fichier impossible a lire
 			if (file != null) {
-				Serie serie = new Serie(file);
-				series.add(serie);
+				sm.addSerieFromFile(file);
 			}
 			break;
 		case 2:
 			afficherSeries();
 			break;
 		case 3:
-			if(series.size() > 0){
+			if(sm.getSeries().size() > 0){
 				GraphModel gm = traiterChoixSerie();
 				if(gm != null){
 					stage.setTitle("Resultat annalyse");
