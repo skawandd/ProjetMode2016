@@ -11,7 +11,7 @@ public class Serie extends Observable{
 	
 	private String nomSerie;
 	private CSVDecoder csv;
-	private HashMap<String, Integer> entrees;
+	private HashMap<String, Double> entrees;
 	private Serie parent;
 	private ArrayList<Serie> childrens;
 	
@@ -26,7 +26,7 @@ public class Serie extends Observable{
 	}
 	
 	public String getNom(){ return nomSerie; }
-	public HashMap<String, Integer> getSerie(){ return entrees; }
+	public HashMap<String, Double> getSerie(){ return entrees; }
 	public Serie getParent(){ return parent; }
 	public ArrayList<Serie> getChildrens(){ return childrens; }
 }
