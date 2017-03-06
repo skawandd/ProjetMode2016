@@ -31,8 +31,12 @@ public class SerieModel extends Observable implements Observer{
 	
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
-		
+		if(arg1 instanceof Serie){
+			series.add((Serie)arg1);
+			((Serie)arg1).addObserver(this);
+			this.setChanged();
+			this.notifyObservers((Serie)arg1);
+		}
 	}
 	
 	public ArrayList<Serie> getSeries(){ return series; }
