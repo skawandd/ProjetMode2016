@@ -107,6 +107,7 @@ public class VueTerminal implements Observer {
 					DrawCourbe dc = new DrawCourbe(scene);
 					gm.addObserver(dc);
 					gm.release();
+					stage.show();
 					return 0;
 				}
 			}else

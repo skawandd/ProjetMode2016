@@ -23,20 +23,31 @@ public class DrawCourbe implements Observer{
 	
 	// TODO afficher toutes les courbes qui sont dans ALseries sur le graph et de differentes couleurs.
     public void afficherCourbe(ArrayList<SerieGraph> ALseries) {
-       /* final CategoryAxis xAxis = new CategoryAxis();
+    	
+    	
+    	
+    	System.out.println("appeler");
+        final CategoryAxis xAxis = new CategoryAxis();
         final NumberAxis yAxis = new NumberAxis();
         xAxis.setLabel("Date");
         final LineChart<String,Number> lineChart = new LineChart<String,Number>(xAxis,yAxis);
         lineChart.setTitle("Bourse");
+        
+        for(int i=0;i<ALseries.size();i++){
+        String name="Series"+i;
         XYChart.Series<String, Number> series = new XYChart.Series<String, Number>();
-        series.setName("Serie 1");
-		for(String i : data.keySet()){
-			series.getData().add(new XYChart.Data<String, Number>(i, data.get(i)));
+        series.setName("Serie "+i);
+        
+        SerieGraph test1=ALseries.get(i);
+        Serie test2=test1.getSerie();
+        HashMap<String, Double> test3=test2.getSerie();
+		for(String j : test3.keySet()){
+			series.getData().add(new XYChart.Data<String, Number>(j, test3.get(j)));
 		}
         scene.setRoot(lineChart);
-        lineChart.getData().add(series);*/
+        lineChart.getData().add(series);
     }
-    
+    }
     public void updateCourbe(SerieGraph sg){
     	
     }
