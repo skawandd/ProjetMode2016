@@ -2,9 +2,10 @@ package modeles;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Observable;
+import java.util.Observer;
 import java.util.Random;
 
-public class GraphModel extends Observable{
+public class GraphModel extends Observable implements Observer{
 	
 	ArrayList<SerieGraph> series;
 	
@@ -33,6 +34,7 @@ public class GraphModel extends Observable{
 		int colors[] = {c.getRed(), c.getGreen(), c.getBlue()};
 		sg.setRgb(colors);
 		series.add(sg);
+		sg.addObserver(this);
 		this.release(new Updater("ajouter", s));
 	}
 	
@@ -43,6 +45,12 @@ public class GraphModel extends Observable{
 	public void release(Updater update){
 		this.setChanged();
 		this.notifyObservers(update);
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		this.release((Updater)arg);
+		
 	}
 	
 }

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
-
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -12,7 +11,6 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.stage.Stage;
 import modeles.Serie;
 import modeles.SerieGraph;
 import modeles.Updater;
@@ -28,8 +26,7 @@ public class DrawCourbe implements Observer{
 		chart = new HashMap<SerieGraph, XYChart.Series<String, Number>>();
 	}
 	
-    public void afficherCourbes(ArrayList<SerieGraph> ALseries) {
-    	int i;
+	public void afficherCourbes(ArrayList<SerieGraph> ALseries) {
         final CategoryAxis xAxis = new CategoryAxis();
         final NumberAxis yAxis = new NumberAxis();
         xAxis.setLabel("Temps");
@@ -42,38 +39,43 @@ public class DrawCourbe implements Observer{
         scene.setRoot(lineChart);
     }
     
-    public void addCourbe(SerieGraph sg){
-    	XYChart.Series<String, Number> series = new XYChart.Series<String, Number>();
-    	series.setName(sg.getSerie().getNom());
-    	Serie s = sg.getSerie();
-        HashMap<String, Double> data = s.getSerie();
+	public void addCourbe(SerieGraph sg){
+		XYChart.Series<String, Number> series = new XYChart.Series<String, Number>();
+		series.setName(sg.getSerie().getNom());
+		Serie s = sg.getSerie();
+	    HashMap<String, Double> data = s.getSerie();
 		for(String j : data.keySet()){
 			series.getData().add(new XYChart.Data<String, Number>(j, data.get(j)));
 		}
-        lineChart.getData().add(series);
-        chart.put(sg, series);
-        editStyle(sg);
-    	this.updateLegend();
-    }
-    
-    public void removeCourbe(SerieGraph sg){
-    	XYChart.Series<String, Number> series = chart.get(sg);
-    	lineChart.getData().remove(series);
-    	chart.remove(sg);
-    }
-    
-    public void editVisibilite(SerieGraph sg){
-    	
-    }
+	    lineChart.getData().add(series);
+	    chart.put(sg, series);
+	    editStyle(sg);
+		this.updateLegend();
+	}
+	
+	public void removeCourbe(SerieGraph sg){
+		XYChart.Series<String, Number> series = chart.get(sg);
+		lineChart.getData().remove(series);
+		chart.remove(sg);
+	}
+	
+	public void editVisibilite(SerieGraph sg){
+		XYChart.Series<String, Number> series = chart.get(sg);
+		if(sg.isVisible()){
+			lineChart.getData().add(series);
+		}else{
+			lineChart.getData().remove(series);
+		}
+	}
     
 	public void editStyle(SerieGraph sg){
-        Node node = chart.get(sg).getNode();
-        int[] rgb = sg.getRgb();
-        node.setStyle("-fx-stroke: rgb("+rgb[0]+", "+rgb[1]+", "+rgb[2]+");");
-        this.updateLegend();
+	    Node node = chart.get(sg).getNode();
+	    int[] rgb = sg.getRgb();
+	    node.setStyle("-fx-stroke: rgb("+rgb[0]+", "+rgb[1]+", "+rgb[2]+");");
+	    this.updateLegend();
 	}
 
-	public void updateLegend(){
+    public void updateLegend(){
 		Platform.runLater(new Runnable() {
 		    @Override
 		    public void run() {
