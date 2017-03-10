@@ -33,12 +33,16 @@ public class GraphModel extends Observable{
 		int colors[] = {c.getRed(), c.getGreen(), c.getBlue()};
 		sg.setRgb(colors);
 		series.add(sg);
-		this.release();
+		this.release(new Updater("ajouter", s));
 	}
 	
 	public void release(){
+		this.release(new Updater("creer", series));
+	}
+	
+	public void release(Updater update){
 		this.setChanged();
-		this.notifyObservers(series);
+		this.notifyObservers(update);
 	}
 	
 }

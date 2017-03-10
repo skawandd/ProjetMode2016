@@ -6,6 +6,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Scanner;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import modeles.GraphModel;
@@ -22,6 +23,7 @@ public class VueTerminal implements Observer {
 	public VueTerminal(Stage stage) {
 		this.stage = stage;
 		scene = new Scene(new VBox(),800,600);
+		stage.setScene(scene);
 		sm = new SerieModel();
 	}
 
