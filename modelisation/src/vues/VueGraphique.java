@@ -11,21 +11,33 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import modeles.GraphModel;
 import modeles.Serie;
 import modeles.SerieGraph;
 import modeles.Updater;
 
-public class DrawCourbe implements Observer{
+public class VueGraphique implements Observer{
  
 	Scene scene;
 	LineChart<String, Number> lineChart;
 	HashMap<SerieGraph, XYChart.Series<String, Number>> chart;
+	GraphModel gm;
 	
-	public DrawCourbe(Scene scene){
+	/**
+	 * Creer une nouvelle vue graphique
+	 * @param scene La scene dans laquelle le graphique apparaitra
+	 * @param gm Le GraphModel correspondant au graphique
+	 */
+	public VueGraphique(Scene scene, GraphModel gm){
 		this.scene = scene;
+		this.gm = gm;
 		chart = new HashMap<SerieGraph, XYChart.Series<String, Number>>();
 	}
 	
+	/**
+	 * Initialise le graphique et affiche la ou les courbes donnees
+	 * @param ALseries
+	 */
 	public void afficherCourbes(ArrayList<SerieGraph> ALseries) {
         final CategoryAxis xAxis = new CategoryAxis();
         final NumberAxis yAxis = new NumberAxis();
@@ -39,6 +51,10 @@ public class DrawCourbe implements Observer{
         scene.setRoot(lineChart);
     }
     
+	/**
+	 * Ajoute une courbe au graphique
+	 * @param sg
+	 */
 	public void addCourbe(SerieGraph sg){
 		XYChart.Series<String, Number> series = new XYChart.Series<String, Number>();
 		series.setName(sg.getSerie().getNom());
@@ -53,12 +69,20 @@ public class DrawCourbe implements Observer{
 		this.updateLegend();
 	}
 	
+	/**
+	 * Supprime une courbe du graphique
+	 * @param sg
+	 */
 	public void removeCourbe(SerieGraph sg){
 		XYChart.Series<String, Number> series = chart.get(sg);
 		lineChart.getData().remove(series);
 		chart.remove(sg);
 	}
 	
+	/**
+	 * Modifie la visibilite d'une courbe
+	 * @param sg
+	 */
 	public void editVisibilite(SerieGraph sg){
 		XYChart.Series<String, Number> series = chart.get(sg);
 		if(sg.isVisible()){
@@ -68,6 +92,10 @@ public class DrawCourbe implements Observer{
 		}
 	}
     
+	/**
+	 * Modifie le style d'une courbe
+	 * @param sg
+	 */
 	public void editStyle(SerieGraph sg){
 	    Node node = chart.get(sg).getNode();
 	    int[] rgb = sg.getRgb();
@@ -75,6 +103,9 @@ public class DrawCourbe implements Observer{
 	    this.updateLegend();
 	}
 
+	/**
+	 * Met a jour la legende
+	 */
     public void updateLegend(){
 		Platform.runLater(new Runnable() {
 		    @Override

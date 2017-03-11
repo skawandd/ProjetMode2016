@@ -5,6 +5,9 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
 
+/**
+ * Represente un graphique avec une ou plusieurs series
+ */
 public class GraphModel extends Observable implements Observer{
 	
 	ArrayList<SerieGraph> series;
@@ -25,6 +28,10 @@ public class GraphModel extends Observable implements Observer{
 		}
 	}
 	
+	/**
+	 * Ajoute une Serie au graphique
+	 * @param s
+	 */
 	public void addSerie(Serie s){
 		SerieGraph sg = new SerieGraph(s);
 		double goldenRatioConj = 1.618033988749895;
@@ -36,6 +43,16 @@ public class GraphModel extends Observable implements Observer{
 		series.add(sg);
 		sg.addObserver(this);
 		this.release(new Updater("ajouter", s));
+	}
+	
+	/**
+	 * Supprime une Serie du graphique
+	 * @param sg
+	 */
+	public void removeSerie(SerieGraph sg){
+		sg.deleteObserver(this);
+		series.remove(sg);
+		this.release(new Updater("supprimer", sg));
 	}
 	
 	public void release(){
@@ -50,7 +67,6 @@ public class GraphModel extends Observable implements Observer{
 	@Override
 	public void update(Observable o, Object arg) {
 		this.release((Updater)arg);
-		
 	}
 	
 }

@@ -7,6 +7,9 @@ import java.util.Observable;
 
 import utils.CSVDecoder;
 
+/**
+ * Represente une serie et permet d'effectuer different calcul dessus (transformation/analyse/prediction)
+ */
 public class Serie extends Observable{
 	
 	private String nomSerie;
@@ -15,6 +18,10 @@ public class Serie extends Observable{
 	private Serie parent;
 	private ArrayList<Serie> childrens;
 	
+	/**
+	 * Charge une serie a partir d'un fichier csv
+	 * @param file
+	 */
 	Serie(File file){
 		nomSerie = file.getName();
 		csv = new CSVDecoder(file);
