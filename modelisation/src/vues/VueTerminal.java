@@ -14,12 +14,15 @@ import modeles.Serie;
 import utils.FileExplorer;
 import modeles.SerieModel;
 
+/**
+ * Vue et controleurs pour une utilisation de l'application via le terminal
+ */
 public class VueTerminal implements Observer {
 
 	private SerieModel sm;
 	private Stage stage;
 	private Scene scene;
-
+	
 	public VueTerminal(Stage stage) {
 		this.stage = stage;
 		scene = new Scene(new VBox(),800,600);
@@ -27,6 +30,9 @@ public class VueTerminal implements Observer {
 		sm = new SerieModel();
 	}
 
+	/**
+	 * Intialise et demarre la vue terminal
+	 */
 	public void lancer() {
 		this.afficherMenu();
 		while (traiterGlobal(getChoix(1, 7)) != 0) {
@@ -35,6 +41,10 @@ public class VueTerminal implements Observer {
 		System.out.println("A bientot");
 	}
 
+	/**
+	 * Recupere le choix d'un utilisateur
+	 * @return le choix de l'utilisateur
+	 */
 	private int getChoix(int min, int max) {
 		int choix = 0;
 		Scanner sc = new Scanner(System.in);
@@ -53,6 +63,9 @@ public class VueTerminal implements Observer {
 		return choix;
 	}
 
+	/**
+	 * Affiche le menu principal
+	 */
 	private void afficherMenu() {
 		System.out.println("\n1) Charger une serie d'un fichier csv");
 		System.out.println("2) Lister les series charges");
@@ -63,6 +76,9 @@ public class VueTerminal implements Observer {
 		System.out.println("7) Quitter");
 	}
 
+	/**
+	 * Affiche les series chargees
+	 */
 	private void afficherSeries() {
 		ArrayList<Serie> s = sm.getSeries();
 		for (int i = 1; i <= s.size(); i++) {
@@ -70,12 +86,20 @@ public class VueTerminal implements Observer {
 		}
 	}
 	
+	/**
+	 * Recupere la selection serie de l'utilisateur
+	 * @return le choix de l'utilisateur
+	 */
 	private int afficherChoixSerie(){
 		System.out.println("Choisissez une serie parmis la liste ci dessous:");
 		afficherSeries();
 		return getChoix(1, sm.getSeries().size());
 	}
 
+	/**
+	 * Gere le choix des series par l'utilisateur a afficher sur le graphique
+	 * @return
+	 */
 	private GraphModel traiterChoixSerie() {
 		GraphModel gm = new GraphModel();
 		int choix, ajouter = 1;
@@ -89,6 +113,11 @@ public class VueTerminal implements Observer {
 		else return gm;
 	}
 
+	/**
+	 * Controlleur global en fonction du choix de l'utilisateur sur le menu principal
+	 * @param choix
+	 * @return 0 si le programme doit s'arreter, 1 sinon
+	 */
 	private int traiterGlobal(int choix) {
 		switch (choix) {
 		case 1:
