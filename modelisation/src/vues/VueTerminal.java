@@ -144,10 +144,41 @@ public class VueTerminal implements Observer {
 			}else
 				System.out.println("Aucun serie charge");
 			break;
+		case 4:
+			if(sm.getSeries().size() > 0){
+				int choixSerie = afficherChoixSerie();
+				int choixTransformation = afficherChoixTransformation();
+				traiterChoixTransformation(choixTransformation, sm.getSeries().get(choixSerie -1));
+			}
+			break;
 		case 7:
 			return 0;
 		}
 		return 1;
+	}
+	
+	private int afficherChoixTransformation(){
+		System.out.println("Choisissez une transformation parmis la liste ci dessous:");
+		afficherTransformations();
+		return getChoix(1, 3);
+	}
+	
+	private Serie traiterChoixTransformation(int choix, Serie parent){
+		switch(choix){
+		case 1:
+			
+			System.out.println("Transformation logarithmique de la serie réaliser");
+			return parent.transformationLogarithmique();
+			}
+		System.out.println("Oups");
+		return null;
+		}
+	
+	private void afficherTransformations(){
+		System.out.println("\n1) Transformation logarithme");
+		System.out.println("2) Transformation de Box-Cox");
+		System.out.println("3) Transformation logistique ]0,1[");
+		System.out.println("4) Quitter");
 	}
 
 	@Override
