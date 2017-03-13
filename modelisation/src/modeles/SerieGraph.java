@@ -9,7 +9,7 @@ import java.util.Observable;
  */
 public class SerieGraph extends Observable{
 
-	private int rgb[] = {0, 0, 0};
+	private int[] rgb = {0, 0, 0};
 	private boolean visible = true;
 	private Serie serie;
 	private String name; 		// le nom de la SerieGraph peut etre different de la Serie qu'elle reference
@@ -46,5 +46,6 @@ public class SerieGraph extends Observable{
 	public Serie getSerie(){ return serie; }
 	public boolean isVisible(){ return visible; }
 	public int[] getRgb(){ return rgb; }
+	public String getNom(){ return name; }
 	
 }
