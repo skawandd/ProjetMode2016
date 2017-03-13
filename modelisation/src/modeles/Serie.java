@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
 
+import javafx.scene.chart.XYChart;
 import utils.CSVDecoder;
 
 /**
@@ -17,6 +18,11 @@ public class Serie extends Observable{
 	private HashMap<String, Double> entrees;
 	private Serie parent;
 	private ArrayList<Serie> childrens;
+	
+	
+	public Serie(){
+		this.entrees = new HashMap<String, Double>();
+	}
 	
 	/**
 	 * Charge une serie a partir d'un fichier csv
@@ -38,28 +44,17 @@ public class Serie extends Observable{
 		this.entrees = h;
 	}
 	
-	public Serie(){
-		this.entrees = new HashMap<String, Double>();
+	public Serie transformationLogarithmique(){
+		HashMap<String, Double> h = new HashMap<>();
+		for(String j : entrees.keySet())
+			if(entrees.get(j) > 0) h.put(j, Math.log(entrees.get(j)));
+		Serie serie = new Serie(this.nomSerie+"_log",this,h);
+		this.setChanged();
+		this.notifyObservers(serie);
+		return serie;
 	}
 	public String getNom(){ return nomSerie; }
 	public HashMap<String, Double> getSerie(){ return entrees; }
 	public Serie getParent(){ return parent; }
 	public ArrayList<Serie> getChildrens(){ return childrens; }
-	
-	public Serie transformationLogarithmique(){
-		HashMap<String, Double> h = new HashMap<>();
-		h.putAll(this.entrees);
-		
-		h.replaceAll((String, Double) -> Math.log(Double));
-		/*for (HashMap.Entry<String, Integer> entry : h.entrySet()) {
-	          h.put(entry.getKey(), (int)Math.log(entry.getValue()));
-	      }*/
-		System.out.println(h.get("0"));
-		System.out.println(this.entrees.get("0"));
-		Serie serie = new Serie(this.nomSerie+"_log",this,h);
-		this.setChanged();
-		this.notifyObservers(serie);
-		
-		return serie;
-	}
 }

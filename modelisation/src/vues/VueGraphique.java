@@ -61,6 +61,7 @@ public class VueGraphique implements Observer{
 		Serie s = sg.getSerie();
 	    HashMap<String, Double> data = s.getSerie();
 		for(String j : data.keySet()){
+			System.out.println(sg.getSerie().getNom()+" : "+j+" : "+data.get(j));
 			series.getData().add(new XYChart.Data<String, Number>(j, data.get(j)));
 		}
 	    lineChart.getData().add(series);
