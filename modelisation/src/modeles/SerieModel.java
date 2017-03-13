@@ -28,6 +28,10 @@ public class SerieModel extends Observable implements Observer{
 		this.notifyObservers(s);
 	}
 	
+	public void addSerie(Serie s){
+		series.add(s);
+	}
+	
 	/**
 	 * Charge une serie a partir d'un serveur web
 	 * @param url
