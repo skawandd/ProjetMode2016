@@ -47,8 +47,10 @@ public class CSVDecoder {
 	 * @return la colonne pour laquelle on veut les donnees.
 	 */
 	public Object[] getColonne(int colonne) throws IOException{
-		if(colonne == 1)return decodeCsv().keySet().toArray(new String[0]);
-		else if(colonne == 2) return decodeCsv().values().toArray(new Double[0]);
+		if(colonne == 1)
+			return decodeCsv().keySet().toArray(new String[decodeCsv().keySet().size()]);
+		else if(colonne == 2) 
+			return decodeCsv().values().toArray(new Double[decodeCsv().values().size()]);
 		return null;
 	}
 	
