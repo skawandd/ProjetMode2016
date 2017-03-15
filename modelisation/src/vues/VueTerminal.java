@@ -7,6 +7,7 @@ import java.util.Observer;
 import java.util.Scanner;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import modeles.GraphModel;
@@ -167,18 +168,18 @@ public class VueTerminal implements Observer {
 		switch(choix){
 		case 1:
 			
-			System.out.println("Transformation logarithmique de la serie réaliser");
+			System.out.println("Transformation logarithmique de la serie rï¿½aliser");
 			return parent.transformationLogarithmique();
 		case 2:
 			System.out.println("Valeur lambda:");
 			Scanner sc = new Scanner(System.in);
 			Double lambda = sc.nextDouble();
 			if(lambda == 0){
-				System.out.println("Transformation BoxCox (lambda == 0) de la serie réaliser");
+				System.out.println("Transformation BoxCox (lambda == 0) de la serie rï¿½aliser");
 				return parent.transformationBoxCox(lambda);
 			}
 			if(lambda > 0){
-				System.out.println("Transformation BoxCox (lambda > 0) de la serie réaliser");
+				System.out.println("Transformation BoxCox (lambda > 0) de la serie rï¿½aliser");
 				return parent.transformationBoxCox(lambda);
 			}
 		}

@@ -11,9 +11,13 @@ import java.util.Random;
 public class GraphModel extends Observable implements Observer{
 	
 	ArrayList<SerieGraph> series;
-	
+	String nom;
+	static int cpt=1;
+
 	public GraphModel(){
 		series = new ArrayList<SerieGraph>();
+		nom="Graphique "+cpt;
+		cpt++;
 	}
 	
 	public GraphModel(Serie serie){
@@ -67,6 +71,13 @@ public class GraphModel extends Observable implements Observer{
 	@Override
 	public void update(Observable o, Object arg) {
 		this.release((Updater)arg);
+	}
+	public String getNom() {
+		return nom;
+	}
+
+	public void setNom(String nom) {
+		this.nom = nom;
 	}
 	
 }

@@ -4,13 +4,31 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+import java.io.File;
+
+
+
+
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import modeles.GraphModel;
 import modeles.Serie;
 import modeles.SerieGraph;
@@ -22,13 +40,20 @@ public class VueGraphique implements Observer{
 	LineChart<String, Number> lineChart;
 	HashMap<SerieGraph, XYChart.Series<String, Number>> chart;
 	GraphModel gm;
-	
+	HBox hbox;
+	VBox vbox;
+	TabPane tabPane;
+	MenuBar menuBar;
 	/**
 	 * Creer une nouvelle vue graphique
 	 * @param scene La scene dans laquelle le graphique apparaitra
 	 * @param gm Le GraphModel correspondant au graphique
 	 */
 	public VueGraphique(Scene scene, GraphModel gm){
+		this.menuBar= new MenuBar(); 
+		this.hbox= new HBox();
+		this.vbox= new VBox();
+		this.tabPane=new TabPane();
 		this.scene = scene;
 		this.gm = gm;
 		chart = new HashMap<SerieGraph, XYChart.Series<String, Number>>();
@@ -48,7 +73,49 @@ public class VueGraphique implements Observer{
         	this.addCourbe(sg);
         }
         lineChart.setCreateSymbols(false);
-        scene.setRoot(lineChart);
+        
+        File path = new File("/src/resource");
+        String[] filelist = path.list();
+        ObservableList<String> items =FXCollections.observableArrayList("");
+        ListView<String> list = new ListView<String>();
+        list.setItems(items);
+        menuBar.setUseSystemMenuBar(true);
+        Menu fileMenu = new Menu("Fichier"); 
+        Menu editMenu = new Menu("Édition"); 
+        Menu helpMenu = new Menu("Aide");
+        menuBar.getMenus().setAll(fileMenu, editMenu, helpMenu);
+		hbox.getChildren().add(list);
+		hbox.getChildren().add(lineChart);
+		Tab tab1 = new Tab();
+		tab1.setText(gm.getNom());
+		tab1.setContent(hbox);
+		Tab tabP=new Tab();
+		tabP.setText("+");
+		Button addButton = new Button("+");
+		addButton.setOnAction(new EventHandler<ActionEvent>() {
+		      @Override
+		      public void handle(ActionEvent event) {
+		        final Tab tab = new Tab("Tab " + (tabPane.getTabs().size() + 1));
+		        tabPane.getTabs().add(tab);
+		        tabPane.getSelectionModel().select(tab);
+		      }
+		    });
+		/*
+		tabP.setOnMouseClicked(f-> {
+			
+			
+			
+			
+			
+		});
+		*/
+		tabPane.getTabs().add(tab1);
+		tabPane.getTabs().add(tabP);
+		vbox.getChildren().add(menuBar);
+		vbox.getChildren().add(addButton);
+		vbox.getChildren().add(tabPane);
+		scene.setRoot(vbox);
+        //scene.setRoot(lineChart);
     }
     
 	/**
