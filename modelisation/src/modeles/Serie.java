@@ -28,6 +28,7 @@ public class Serie extends Observable{
 	 * Charge une serie a partir d'un fichier csv
 	 * @param file
 	 */
+	
 	Serie(File file){
 		nomSerie = file.getName();
 		csv = new CSVDecoder(file);
@@ -47,7 +48,8 @@ public class Serie extends Observable{
 	public Serie transformationLogarithmique(){
 		HashMap<String, Double> h = new HashMap<>();
 		for(String j : entrees.keySet())
-			if(entrees.get(j) > 0) h.put(j, Math.log(entrees.get(j)));
+			if(entrees.get(j) > 0)
+				h.put(j, Math.log(entrees.get(j)));
 		Serie serie = new Serie(this.nomSerie+"_log",this,h);
 		this.setChanged();
 		this.notifyObservers(serie);
@@ -63,6 +65,31 @@ public class Serie extends Observable{
 		this.notifyObservers(serie);
 		return serie;
 	}
+
+	
+	/*public Serie transformationLissageMoyMobile(int ordre){
+		HashMap<String, Double> h = new HashMap<>();
+		int k;
+		int nb;
+		if(ordre%2!=0 && ordre*2 <= entrees.size()){
+			k = (ordre - 1)/2;
+			nb = (int)(entrees.size()/ordre);
+			for(String j : entrees.keySet())
+				//TODO
+				
+			
+		}
+		else if(ordre*2 <= entrees.size()){
+			//TODO
+			
+		}
+		Serie serie = new Serie(this.nomSerie+"_LissMoyMob",this,h);
+		this.setChanged();
+		this.notifyObservers(serie);
+		return serie;
+	}
+	*/
+	
 	public String getNom(){ return nomSerie; }
 	public HashMap<String, Double> getSerie(){ return entrees; }
 	public Serie getParent(){ return parent; }
