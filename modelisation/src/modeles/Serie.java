@@ -53,6 +53,16 @@ public class Serie extends Observable{
 		this.notifyObservers(serie);
 		return serie;
 	}
+	
+	public Serie transformationBoxCox(Double lambda){
+		HashMap<String, Double> h = new HashMap<>();
+		for(String j : entrees.keySet())
+			h.put(j,((Math.pow(entrees.get(j), lambda))-1)/lambda);
+		Serie serie = new Serie(this.nomSerie+"_BoxCox",this,h);
+		this.setChanged();
+		this.notifyObservers(serie);
+		return serie;
+	}
 	public String getNom(){ return nomSerie; }
 	public HashMap<String, Double> getSerie(){ return entrees; }
 	public Serie getParent(){ return parent; }

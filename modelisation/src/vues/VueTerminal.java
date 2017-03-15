@@ -169,7 +169,19 @@ public class VueTerminal implements Observer {
 			
 			System.out.println("Transformation logarithmique de la serie réaliser");
 			return parent.transformationLogarithmique();
+		case 2:
+			System.out.println("Valeur lambda:");
+			Scanner sc = new Scanner(System.in);
+			Double lambda = sc.nextDouble();
+			if(lambda == 0){
+				System.out.println("Transformation BoxCox (lambda == 0) de la serie réaliser");
+				return parent.transformationBoxCox(lambda);
 			}
+			if(lambda > 0){
+				System.out.println("Transformation BoxCox (lambda > 0) de la serie réaliser");
+				return parent.transformationBoxCox(lambda);
+			}
+		}
 		System.out.println("Oups");
 		return null;
 		}
