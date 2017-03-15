@@ -43,13 +43,15 @@ public class Serie extends Observable{
 		this.parent = parent;
 		this.entrees = h;
 	}
-	
+	public String nameWithOutExtension(String nomSerie){
+		return this.nomSerie.substring(0, this.nomSerie.indexOf(".csv"));
+	}
 	public Serie transformationLogarithmique(){
 		HashMap<String, Double> h = new HashMap<>();
 		for(String j : entrees.keySet())
 			if(entrees.get(j) > 0) h.put(j, Math.log(entrees.get(j)));
 			else return null;
-		Serie serie = new Serie(this.nomSerie+"_log",this,h);
+		Serie serie = new Serie(nameWithOutExtension(this.nomSerie)+"_log", this, h);
 		this.setChanged();
 		this.notifyObservers(serie);
 		return serie;
@@ -63,11 +65,27 @@ public class Serie extends Observable{
 		HashMap<String, Double> h = new HashMap<>();
 		for(String j : entrees.keySet())
 			h.put(j,((Math.pow(entrees.get(j), lambda))-1)/lambda);
-		Serie serie = new Serie(this.nomSerie+"_BoxCox",this,h);
+		Serie serie = new Serie(nameWithOutExtension(this.nomSerie)+"_BoxCox", this, h);
 		this.setChanged();
 		this.notifyObservers(serie);
 		return serie;
 	}
+	
+	public Serie transformationLogistique(){
+		HashMap<String, Double> h = new HashMap<>();
+		Double t;
+		for(String j: entrees.keySet()){
+			if(0 >= entrees.get(j) || entrees.get(j) >= 1)
+				return null;
+			t = Math.log(entrees.get(j)/(1 - entrees.get(j)));
+			h.put(j, t);
+		}
+		Serie serie = new Serie(nameWithOutExtension(this.nomSerie)+"_logistique", this, h);
+		this.setChanged();
+		this.notifyObservers(serie);
+		return serie;
+	}
+	
 	public String getNom(){ return nomSerie; }
 	public void setNom(String nom){ nomSerie = nom; }
 	public HashMap<String, Double> getSerie(){ return entrees; }
