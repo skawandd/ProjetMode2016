@@ -48,6 +48,7 @@ public class Serie extends Observable{
 		HashMap<String, Double> h = new HashMap<>();
 		for(String j : entrees.keySet())
 			if(entrees.get(j) > 0) h.put(j, Math.log(entrees.get(j)));
+			else return null;
 		Serie serie = new Serie(this.nomSerie+"_log",this,h);
 		this.setChanged();
 		this.notifyObservers(serie);
@@ -55,6 +56,10 @@ public class Serie extends Observable{
 	}
 	
 	public Serie transformationBoxCox(Double lambda){
+		if(lambda == 0){
+			Serie s = this.transformationLogarithmique();
+			s.nomSerie = s.nomSerie+"_BoxCox";
+		}
 		HashMap<String, Double> h = new HashMap<>();
 		for(String j : entrees.keySet())
 			h.put(j,((Math.pow(entrees.get(j), lambda))-1)/lambda);
@@ -64,6 +69,7 @@ public class Serie extends Observable{
 		return serie;
 	}
 	public String getNom(){ return nomSerie; }
+	public void setNom(String nom){ nomSerie = nom; }
 	public HashMap<String, Double> getSerie(){ return entrees; }
 	public Serie getParent(){ return parent; }
 	public ArrayList<Serie> getChildrens(){ return childrens; }
