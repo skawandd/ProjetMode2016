@@ -168,12 +168,17 @@ public class VueTerminal implements Observer {
 		switch(choix){
 		case 1:
 			
+
 			System.out.println("Transformation logarithmique de la serie r�aliser");
+
+			System.out.println("Transformation logarithmique de la serie realiser");
+
 			return parent.transformationLogarithmique();
 		case 2:
 			System.out.println("Valeur lambda:");
 			Scanner sc = new Scanner(System.in);
 			Double lambda = sc.nextDouble();
+
 			if(lambda == 0){
 				System.out.println("Transformation BoxCox (lambda == 0) de la serie r�aliser");
 				return parent.transformationBoxCox(lambda);
@@ -182,6 +187,17 @@ public class VueTerminal implements Observer {
 				System.out.println("Transformation BoxCox (lambda > 0) de la serie r�aliser");
 				return parent.transformationBoxCox(lambda);
 			}
+			System.out.println("Transformation BoxCox de la serie realiser");
+			return parent.transformationBoxCox(lambda);
+		case 3:
+			Serie r = parent.transformationLogistique();
+			if(r == null){
+				System.out.println("Valeurs hors de l'intervalle ]0,1[ !");
+				return null;
+
+			}
+			System.out.println("Transformation logistique ]0,1[ de la serie realiser");
+			return r;
 		}
 		System.out.println("Oups");
 		return null;
