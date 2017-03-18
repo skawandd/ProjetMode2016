@@ -136,10 +136,9 @@ public class VueTerminal implements Observer {
 				GraphModel gm = traiterChoixSerie();
 				if(gm != null){
 					stage.setTitle("Resultat annalyse");
-					VueGraphique dc = new VueGraphique(scene, gm);
-					gm.addObserver(dc);
-					gm.release();
-					stage.show();
+					VueIhm vi = new VueIhm(stage, sm);
+					vi.lancer();
+					vi.creerNouveauGraph(gm);
 					return 0;
 				}
 			}else

@@ -36,27 +36,32 @@ import modeles.Updater;
 
 public class VueGraphique implements Observer{
  
-	Scene scene;
+	Tab tab;
 	LineChart<String, Number> lineChart;
 	HashMap<SerieGraph, XYChart.Series<String, Number>> chart;
 	GraphModel gm;
-	HBox hbox;
-	VBox vbox;
-	TabPane tabPane;
-	MenuBar menuBar;
+	
 	/**
 	 * Creer une nouvelle vue graphique
 	 * @param scene La scene dans laquelle le graphique apparaitra
 	 * @param gm Le GraphModel correspondant au graphique
 	 */
-	public VueGraphique(Scene scene, GraphModel gm){
-		this.menuBar= new MenuBar(); 
-		this.hbox= new HBox();
-		this.vbox= new VBox();
-		this.tabPane=new TabPane();
-		this.scene = scene;
+	public VueGraphique(Tab tab, GraphModel gm){
+		this.tab = tab;
 		this.gm = gm;
 		chart = new HashMap<SerieGraph, XYChart.Series<String, Number>>();
+	}
+	
+	public void init(){
+        final CategoryAxis xAxis = new CategoryAxis();
+        final NumberAxis yAxis = new NumberAxis();
+        xAxis.setLabel("Temps");
+        lineChart = new LineChart<String,Number>(xAxis,yAxis);
+        lineChart.setTitle("Series");
+        lineChart.setCreateSymbols(false);
+        HBox hbox = new HBox();
+		hbox.getChildren().add(lineChart);
+		tab.setContent(hbox);
 	}
 	
 	/**
@@ -64,58 +69,10 @@ public class VueGraphique implements Observer{
 	 * @param ALseries
 	 */
 	public void afficherCourbes(ArrayList<SerieGraph> ALseries) {
-        final CategoryAxis xAxis = new CategoryAxis();
-        final NumberAxis yAxis = new NumberAxis();
-        xAxis.setLabel("Temps");
-        lineChart = new LineChart<String,Number>(xAxis,yAxis);
-        lineChart.setTitle("Series");
-        for(SerieGraph sg : ALseries){
-        	this.addCourbe(sg);
-        }
-        lineChart.setCreateSymbols(false);
-        
-        File path = new File("/src/resource");
-        String[] filelist = path.list();
-        ObservableList<String> items =FXCollections.observableArrayList("");
-        ListView<String> list = new ListView<String>();
-        list.setItems(items);
-        menuBar.setUseSystemMenuBar(true);
-        Menu fileMenu = new Menu("Fichier"); 
-        Menu editMenu = new Menu("Édition"); 
-        Menu helpMenu = new Menu("Aide");
-        menuBar.getMenus().setAll(fileMenu, editMenu, helpMenu);
-		hbox.getChildren().add(list);
-		hbox.getChildren().add(lineChart);
-		Tab tab1 = new Tab();
-		tab1.setText(gm.getNom());
-		tab1.setContent(hbox);
-		Tab tabP=new Tab();
-		tabP.setText("+");
-		Button addButton = new Button("+");
-		addButton.setOnAction(new EventHandler<ActionEvent>() {
-		      @Override
-		      public void handle(ActionEvent event) {
-		        final Tab tab = new Tab("Tab " + (tabPane.getTabs().size() + 1));
-		        tabPane.getTabs().add(tab);
-		        tabPane.getSelectionModel().select(tab);
-		      }
-		    });
-		/*
-		tabP.setOnMouseClicked(f-> {
-			
-			
-			
-			
-			
-		});
-		*/
-		tabPane.getTabs().add(tab1);
-		tabPane.getTabs().add(tabP);
-		vbox.getChildren().add(menuBar);
-		vbox.getChildren().add(addButton);
-		vbox.getChildren().add(tabPane);
-		scene.setRoot(vbox);
-        //scene.setRoot(lineChart);
+		tab.setText(gm.getNom());
+		for(SerieGraph sg : ALseries){
+			this.addCourbe(sg);
+		}
     }
     
 	/**
@@ -128,7 +85,7 @@ public class VueGraphique implements Observer{
 		Serie s = sg.getSerie();
 	    HashMap<String, Double> data = s.getSerie();
 		for(String j : data.keySet()){
-			System.out.println(sg.getSerie().getNom()+" : "+j+" : "+data.get(j));
+			//System.out.println(sg.getSerie().getNom()+" : "+j+" : "+data.get(j));
 			series.getData().add(new XYChart.Data<String, Number>(j, data.get(j)));
 		}
 	    lineChart.getData().add(series);
