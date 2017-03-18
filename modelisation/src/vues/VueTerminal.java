@@ -72,9 +72,8 @@ public class VueTerminal implements Observer {
 		System.out.println("2) Lister les series charges");
 		System.out.println("3) Afficher une ou des serie(s)");
 		System.out.println("4) Effectuer une transformation");
-		System.out.println("5) Effectuer une moyenne mobile d'ordre h");
-		System.out.println("6) Calculer les residus entre une serie de depart et une serie lissee");
-		System.out.println("7) Quitter");
+		System.out.println("5) Calculer les residus entre une serie de depart et une serie lissee");
+		System.out.println("6) Quitter");
 	}
 
 	/**
@@ -151,7 +150,7 @@ public class VueTerminal implements Observer {
 				traiterChoixTransformation(choixTransformation, sm.getSeries().get(choixSerie -1));
 			}
 			break;
-		case 7:
+		case 6:
 			return 0;
 		}
 		return 1;
@@ -160,53 +159,63 @@ public class VueTerminal implements Observer {
 	private int afficherChoixTransformation(){
 		System.out.println("Choisissez une transformation parmis la liste ci dessous:");
 		afficherTransformations();
-		return getChoix(1, 3);
+		return getChoix(1, 7);
 	}
 	
 	private Serie traiterChoixTransformation(int choix, Serie parent){
 		switch(choix){
-		case 1:
-			
-
-			System.out.println("Transformation logarithmique de la serie r�aliser");
-
-			System.out.println("Transformation logarithmique de la serie realiser");
-
-			return parent.transformationLogarithmique();
-		case 2:
-			System.out.println("Valeur lambda:");
-			Scanner sc = new Scanner(System.in);
-			Double lambda = sc.nextDouble();
-
-			if(lambda == 0){
-				System.out.println("Transformation BoxCox (lambda == 0) de la serie r�aliser");
+			case 1:
+				System.out.println("Transformation logarithmique de la serie realise");
+				return parent.transformationLogarithmique();
+			case 2:
+				System.out.println("Valeur lambda:");
+				Scanner sc = new Scanner(System.in);
+				Double lambda = sc.nextDouble();
+	
+				if(lambda == 0){
+					System.out.println("Transformation BoxCox (lambda == 0) de la serie realise");
+					return parent.transformationBoxCox(lambda);
+				}
+				if(lambda > 0){
+					System.out.println("Transformation BoxCox (lambda > 0) de la serie realise");
+					return parent.transformationBoxCox(lambda);
+				}
+				System.out.println("Transformation BoxCox de la serie realise");
 				return parent.transformationBoxCox(lambda);
-			}
-			if(lambda > 0){
-				System.out.println("Transformation BoxCox (lambda > 0) de la serie r�aliser");
-				return parent.transformationBoxCox(lambda);
-			}
-			System.out.println("Transformation BoxCox de la serie realiser");
-			return parent.transformationBoxCox(lambda);
-		case 3:
-			Serie r = parent.transformationLogistique();
-			if(r == null){
-				System.out.println("Valeurs hors de l'intervalle ]0,1[ !");
-				return null;
-
-			}
-			System.out.println("Transformation logistique ]0,1[ de la serie realiser");
-			return r;
+			case 3:
+				Serie r = parent.transformationLogistique();
+				if(r == null){
+					System.out.println("Valeurs hors de l'intervalle ]0,1[ !");
+					return null;
+	
+				}
+				System.out.println("Transformation logistique ]0,1[ de la serie realise");
+				return r;
+			case 4:
+				System.out.println("Valeur ordre j :");
+				Scanner sc2 = new Scanner(System.in);
+				int ordre = sc2.nextInt();
+				return parent.transformationMoyMobile(ordre);
+			case 5:
+				System.out.println("Valeur ordre h :");
+				Scanner sc1 = new Scanner(System.in);
+				int h = sc1.nextInt();
+				return parent.transformationMoyMobilePonderee(h);
+			default:
+					System.out.println("Oups");
+					return null;
 		}
-		System.out.println("Oups");
-		return null;
-		}
+	}
 	
 	private void afficherTransformations(){
 		System.out.println("\n1) Transformation logarithme");
 		System.out.println("2) Transformation de Box-Cox");
 		System.out.println("3) Transformation logistique ]0,1[");
-		System.out.println("4) Quitter");
+		System.out.println("4) Lissage a l'aide d'une moyenne mobile simple d'ordre h");
+		System.out.println("5) Lissage a l'aide d'une moyenne mobile ponderee d'ordre h");
+		System.out.println("6) Calcul de la serie desaisonnalise");
+		System.out.println("7) Estimation d'une tendance lineaire avec une droite de la forme Xt = at + b = et");
+		System.out.println("8) Quitter");
 	}
 
 	@Override

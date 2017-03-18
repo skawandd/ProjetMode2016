@@ -1,6 +1,7 @@
 package vues;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -20,6 +21,7 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -37,8 +39,8 @@ import modeles.Updater;
 public class VueGraphique implements Observer{
  
 	Tab tab;
-	LineChart<String, Number> lineChart;
-	HashMap<SerieGraph, XYChart.Series<String, Number>> chart;
+	LineChart<Number, Number> lineChart;
+	LinkedHashMap<SerieGraph, XYChart.Series<Number, Number>> chart;
 	GraphModel gm;
 	
 	/**
@@ -49,14 +51,14 @@ public class VueGraphique implements Observer{
 	public VueGraphique(Tab tab, GraphModel gm){
 		this.tab = tab;
 		this.gm = gm;
-		chart = new HashMap<SerieGraph, XYChart.Series<String, Number>>();
+		chart = new LinkedHashMap<>();
 	}
 	
 	public void init(){
-        final CategoryAxis xAxis = new CategoryAxis();
+        final NumberAxis xAxis = new NumberAxis();
         final NumberAxis yAxis = new NumberAxis();
         xAxis.setLabel("Temps");
-        lineChart = new LineChart<String,Number>(xAxis,yAxis);
+        lineChart = new LineChart<Number,Number>(xAxis,yAxis);
         lineChart.setTitle("Series");
         lineChart.setCreateSymbols(false);
         HBox hbox = new HBox();
@@ -80,18 +82,18 @@ public class VueGraphique implements Observer{
 	 * @param sg
 	 */
 	public void addCourbe(SerieGraph sg){
-		XYChart.Series<String, Number> series = new XYChart.Series<String, Number>();
+		Series<Number, Number> series = new XYChart.Series<Number, Number>();
 		series.setName(sg.getSerie().getNom());
 		Serie s = sg.getSerie();
-	    HashMap<String, Double> data = s.getSerie();
-		for(String j : data.keySet()){
-			//System.out.println(sg.getSerie().getNom()+" : "+j+" : "+data.get(j));
-			series.getData().add(new XYChart.Data<String, Number>(j, data.get(j)));
+	    HashMap<Integer, Double> data = s.getSerie();
+		for(Integer j : data.keySet()){
+			System.out.println(sg.getSerie().getNom()+" : "+j+" : "+data.get(j));
+			series.getData().add(new XYChart.Data<Number, Number>(j, data.get(j)));
 		}
 	    lineChart.getData().add(series);
 	    chart.put(sg, series);
 	    editStyle(sg);
-		this.updateLegend();
+	    this.updateLegend();
 	}
 	
 	/**
@@ -99,7 +101,7 @@ public class VueGraphique implements Observer{
 	 * @param sg
 	 */
 	public void removeCourbe(SerieGraph sg){
-		XYChart.Series<String, Number> series = chart.get(sg);
+		Series<Number, Number> series = chart.get(sg);
 		lineChart.getData().remove(series);
 		chart.remove(sg);
 	}
@@ -109,7 +111,7 @@ public class VueGraphique implements Observer{
 	 * @param sg
 	 */
 	public void editVisibilite(SerieGraph sg){
-		XYChart.Series<String, Number> series = chart.get(sg);
+		Series<Number, Number> series = chart.get(sg);
 		if(sg.isVisible()){
 			lineChart.getData().add(series);
 		}else{

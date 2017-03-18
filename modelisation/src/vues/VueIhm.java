@@ -25,7 +25,7 @@ public class VueIhm implements Observer{
 	ArrayList<GraphModel> gms;
 	
 	public VueIhm(Stage s, SerieModel sm){
-		sm = this.sm;
+		this.sm = sm;
 		tabPane = new TabPane();
 		gms = new ArrayList<>();
 		stage = s; 

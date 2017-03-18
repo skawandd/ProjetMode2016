@@ -23,18 +23,18 @@ public class CSVDecoder {
 	 * 
 	 * @return une Map associant une valeur a une date. null si le fichier ne peut etre lu.
 	 */
-	public HashMap<String, Double> decodeCsv() throws IOException{
+	public HashMap<Integer, Double> decodeCsv() throws IOException{
 		String elems[];
 		String line;
 		FileInputStream fis;
-		HashMap<String, Double> CSV = new HashMap<String, Double>();
+		HashMap<Integer, Double> CSV = new HashMap<Integer, Double>();
 		if(!file.canRead()) return null;
 		fis = new FileInputStream(file);
 		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 		while((line = br.readLine()) != null){
 			elems = line.split(",");
 			if(elems.length == 2){
-				CSV.put(elems[0], Double.parseDouble(elems[1]));
+				CSV.put(Integer.parseInt(elems[0]), Double.parseDouble(elems[1]));
 			}
 		}
 		br.close();
@@ -48,7 +48,7 @@ public class CSVDecoder {
 	 */
 	public Object[] getColonne(int colonne) throws IOException{
 		if(colonne == 1)
-			return decodeCsv().keySet().toArray(new String[decodeCsv().keySet().size()]);
+			return decodeCsv().keySet().toArray(new Integer[decodeCsv().keySet().size()]);
 		else if(colonne == 2) 
 			return decodeCsv().values().toArray(new Double[decodeCsv().values().size()]);
 		return null;
