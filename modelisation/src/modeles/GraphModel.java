@@ -14,17 +14,28 @@ public class GraphModel extends Observable implements Observer{
 	String nom;
 	static int cpt=1;
 
+	/**
+	 * Construit un nouveau modele graphique vide
+	 */
 	public GraphModel(){
 		series = new ArrayList<SerieGraph>();
 		nom="Graphique "+cpt;
 		cpt++;
 	}
 	
+	/**
+	 * Construit un nouveau modele graphique
+	 * @param serie Une serie qui sera contenue dans le graphique
+	 */
 	public GraphModel(Serie serie){
 		this();
 		series.add(new SerieGraph(serie));
 	}
 	
+	/**
+	 * Construit un nouveau modele graphique
+	 * @param series Une ArrayList de Serie qui seront contenues dans le graphique
+	 */
 	public GraphModel(ArrayList<Serie> series){
 		this();
 		for(Serie serie : series){
@@ -57,6 +68,23 @@ public class GraphModel extends Observable implements Observer{
 		sg.deleteObserver(this);
 		series.remove(sg);
 		this.release(new Updater("supprimer", sg));
+	}
+	
+	/**
+	 * Organise les series en fonctions des parents <-> enfants
+	 */
+	public void organise(){
+		
+	}
+	
+	/**
+	 * Retourne la position dans d'une SerieGraph (ex 1.1.2 est le deuxieme enfant du premiere enfant d'une serie)
+	 * @param sg La SerieGraph dont on veut la position
+	 * @return
+	 */
+	public String getPos(SerieGraph sg){
+		organise();
+		return "1";
 	}
 	
 	public void release(){
