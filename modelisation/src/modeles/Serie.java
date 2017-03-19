@@ -88,7 +88,8 @@ public class Serie extends Observable{
 	}
 
 	
-	/*public Serie transformationLissageMoyMobile(int ordre){
+	/*
+	 public Serie transformationLissageMoyMobile(int ordre){
 		HashMap<String, Double> h = new HashMap<>();
 		int k;
 		int nb;
