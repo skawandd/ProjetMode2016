@@ -54,6 +54,9 @@ public class VueGraphique implements Observer{
 		chart = new LinkedHashMap<>();
 	}
 	
+	/**
+	 * Initialise le graphique
+	 */
 	public void init(){
         final NumberAxis xAxis = new NumberAxis();
         final NumberAxis yAxis = new NumberAxis();
@@ -67,7 +70,7 @@ public class VueGraphique implements Observer{
 	}
 	
 	/**
-	 * Initialise le graphique et affiche la ou les courbes donnees
+	 * Affiche la ou les courbes donnees
 	 * @param ALseries
 	 */
 	public void afficherCourbes(ArrayList<SerieGraph> ALseries) {

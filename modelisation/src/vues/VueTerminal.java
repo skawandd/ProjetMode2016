@@ -26,8 +26,6 @@ public class VueTerminal implements Observer {
 	
 	public VueTerminal(Stage stage) {
 		this.stage = stage;
-		scene = new Scene(new VBox(),800,600);
-		stage.setScene(scene);
 		sm = new SerieModel();
 	}
 
@@ -75,6 +73,21 @@ public class VueTerminal implements Observer {
 		System.out.println("5) Calculer les residus entre une serie de depart et une serie lissee");
 		System.out.println("6) Quitter");
 	}
+	
+	/**
+	 * Affiche les differentes transformations possible
+	 */
+	private void afficherTransformations(){
+		System.out.println("\n1) Transformation logarithme");
+		System.out.println("2) Transformation de Box-Cox");
+		System.out.println("3) Transformation logistique ]0,1[");
+		System.out.println("4) Lissage a l'aide d'une moyenne mobile simple d'ordre h");
+		System.out.println("5) Lissage a l'aide d'une moyenne mobile ponderee d'ordre h");
+		System.out.println("6) Calcul de la serie desaisonnalise");
+		System.out.println("7) Estimation d'une tendance lineaire avec une droite de la forme Xt = at + b = et");
+		System.out.println("8) Quitter");
+	}
+
 
 	/**
 	 * Affiche les series chargees
@@ -156,12 +169,22 @@ public class VueTerminal implements Observer {
 		return 1;
 	}
 	
+	/**
+	 * Recupere la transformation choisi par l'utilisateur
+	 * @return Le choix de l'utilisateur
+	 */
 	private int afficherChoixTransformation(){
 		System.out.println("Choisissez une transformation parmis la liste ci dessous:");
 		afficherTransformations();
 		return getChoix(1, 7);
 	}
 	
+	/**
+	 * Traite la transformation choisi par l'utilisateur
+	 * @param choix La transformation choisi par l'utilisateur
+	 * @param parent La serie choisi par l'utilisateur
+	 * @return
+	 */
 	private Serie traiterChoixTransformation(int choix, Serie parent){
 		switch(choix){
 			case 1:
@@ -207,17 +230,6 @@ public class VueTerminal implements Observer {
 		}
 	}
 	
-	private void afficherTransformations(){
-		System.out.println("\n1) Transformation logarithme");
-		System.out.println("2) Transformation de Box-Cox");
-		System.out.println("3) Transformation logistique ]0,1[");
-		System.out.println("4) Lissage a l'aide d'une moyenne mobile simple d'ordre h");
-		System.out.println("5) Lissage a l'aide d'une moyenne mobile ponderee d'ordre h");
-		System.out.println("6) Calcul de la serie desaisonnalise");
-		System.out.println("7) Estimation d'une tendance lineaire avec une droite de la forme Xt = at + b = et");
-		System.out.println("8) Quitter");
-	}
-
 	@Override
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub

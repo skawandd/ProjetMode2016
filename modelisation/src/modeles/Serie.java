@@ -42,6 +42,12 @@ public class Serie extends Observable{
 		}
 	}
 	
+	/**
+	 * Charge une serie a partir de donnees
+	 * @param nomSerie Le nom de la serie
+	 * @param parent La serie parent, ou null si elle n'en a pas
+	 * @param h Une HashMap avec le temps en abscisse et la valeur en ordonnee
+	 */
 	Serie(String nomSerie, Serie parent, HashMap<Integer, Double> h){
 		this.nomSerie = nomSerie;
 		this.parent = parent;
@@ -52,6 +58,10 @@ public class Serie extends Observable{
 		return this.nomSerie.substring(0, this.nomSerie.indexOf(".csv"));
 	}
 	
+	/**
+	 * Effectue la transformation logarithmique
+	 * @return La serie resultat ou null en cas d'erreur
+	 */
 	public Serie transformationLogarithmique(){
 		HashMap<Integer, Double> h = new HashMap<>();
 		for(Integer j : entrees.keySet())
@@ -63,6 +73,11 @@ public class Serie extends Observable{
 		return serie;
 	}
 	
+	/**
+	 * Effectue la transformation de BoxCox
+	 * @param lambda 
+	 * @return La serie resultat ou null en cas d'erreur
+	 */
 	public Serie transformationBoxCox(Double lambda){
 		Serie serie;
 		if(lambda == 0){
@@ -80,6 +95,10 @@ public class Serie extends Observable{
 		return serie;
 	}
 	
+	/**
+	 * Effectue la transformation logistique
+	 * @return La serie resutlat ou null en cas d'erreur
+	 */
 	public Serie transformationLogistique(){
 		HashMap<Integer, Double> h = new HashMap<>();
 		Double t;
@@ -96,6 +115,12 @@ public class Serie extends Observable{
 	}
 
 	
+	/**
+	 * La transformation moyenne mobile appel transformationMoyMobilePonderee avec des ponderations egales
+	 * En effet, ce n'est rien d'autre qu'une transformation moyenne mobile ponderee particuliere
+	 * @param ordre
+	 * @return La serie resultat ou null en cas d'erreur
+	 */
 	public Serie transformationMoyMobile(int ordre){
 		double[] ponderation = new double[ordre/2 + 1];
 		for(int i = 0; i < ordre/2 + 1; i++){
@@ -104,6 +129,13 @@ public class Serie extends Observable{
 		return transformationMoyMobilePonderee(ordre, ponderation);
 	}
 	
+	/**
+	 * Effectue la transformation moyenne mobile ponderee d'une serie
+	 * @param ordre
+	 * @param ponderation Un tableau des ponderations a appliquer, du point le plus loin au point le plus proche
+	 * ponderation[0] = ponderation Xt-ordre/2 = ponderation Xt+ordre/2 et ponderation[ponderation.length-1] = ponderation Xt
+	 * @return La serie resultat ou null en cas d'erreur
+	 */
 	public Serie transformationMoyMobilePonderee(int ordre, double[] ponderation){
 		double total, coef = 0;
 		if(ponderation.length != ordre/2 + 1) return null;
@@ -133,6 +165,12 @@ public class Serie extends Observable{
 		return serie;
 	}
 	
+	/**
+	 * Effectue une transformation moyenne mobile ponderee avec des ponderations calculer celon la formule \
+	 * ponderation[i-] = (i^2)/sum(0, ordre/2+1, i^2)
+	 * @param ordre
+	 * @return La serie resultat ou null en cas d'erreur
+	 */
 	public Serie transformationMoyMobilePonderee(int ordre){
 		int ordrediv2 = ordre/2 + 1;
 		double[] ponderation = new double[ordrediv2];

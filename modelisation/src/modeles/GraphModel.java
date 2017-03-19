@@ -14,17 +14,28 @@ public class GraphModel extends Observable implements Observer{
 	String nom;
 	static int cpt=1;
 
+	/**
+	 * Construit un nouveau modele graphique vide
+	 */
 	public GraphModel(){
 		series = new ArrayList<SerieGraph>();
 		nom="Graphique "+cpt;
 		cpt++;
 	}
 	
+	/**
+	 * Construit un nouveau modele graphique
+	 * @param serie Une serie qui sera contenue dans le graphique
+	 */
 	public GraphModel(Serie serie){
 		this();
 		series.add(new SerieGraph(serie));
 	}
 	
+	/**
+	 * Construit un nouveau modele graphique
+	 * @param series Une ArrayList de Serie qui seront contenues dans le graphique
+	 */
 	public GraphModel(ArrayList<Serie> series){
 		this();
 		for(Serie serie : series){

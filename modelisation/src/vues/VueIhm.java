@@ -21,9 +21,13 @@ public class VueIhm implements Observer{
 	Stage stage;
 	TabPane tabPane;
 	SerieModel sm;
-
 	ArrayList<GraphModel> gms;
 	
+	/**
+	 * Creer une IHM permettant de visualiser des courbes dans des graphiques, d'en charger, de les sauvegarder ...
+	 * @param s Le Stage dans lequel sera affiche l'ihm
+	 * @param sm Le modele serie de reference (contenant toutes les series charges)
+	 */
 	public VueIhm(Stage s, SerieModel sm){
 		this.sm = sm;
 		tabPane = new TabPane();
@@ -31,6 +35,9 @@ public class VueIhm implements Observer{
 		stage = s; 
 	}
 	
+	/**
+	 * Lance l'ihm : creer les widgets et affiche la fenetre
+	 */
 	public void lancer(){
 		MenuBar menuBar = new MenuBar();
 		VBox vbox = new VBox();
@@ -57,6 +64,10 @@ public class VueIhm implements Observer{
 		stage.show();
 	}
 	
+	/**
+	 * Creer un nouveau graphique dans un nouvel onglet
+	 * @param gm Le modele graphique de reference
+	 */
 	public void creerNouveauGraph(GraphModel gm){
 		HBox hbox = new HBox();
 		Tab tab = new Tab(gm.getNom());
