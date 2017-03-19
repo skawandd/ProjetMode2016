@@ -70,6 +70,23 @@ public class GraphModel extends Observable implements Observer{
 		this.release(new Updater("supprimer", sg));
 	}
 	
+	/**
+	 * Organise les series en fonctions des parents <-> enfants
+	 */
+	public void organise(){
+		
+	}
+	
+	/**
+	 * Retourne la position dans d'une SerieGraph (ex 1.1.2 est le deuxieme enfant du premiere enfant d'une serie)
+	 * @param sg La SerieGraph dont on veut la position
+	 * @return
+	 */
+	public String getPos(SerieGraph sg){
+		organise();
+		return "1";
+	}
+	
 	public void release(){
 		this.release(new Updater("creer", series));
 	}

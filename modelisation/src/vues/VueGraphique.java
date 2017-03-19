@@ -40,6 +40,7 @@ public class VueGraphique implements Observer{
  
 	Tab tab;
 	LineChart<Number, Number> lineChart;
+	ListView<String> list;
 	LinkedHashMap<SerieGraph, XYChart.Series<Number, Number>> chart;
 	GraphModel gm;
 	
@@ -64,8 +65,11 @@ public class VueGraphique implements Observer{
         lineChart = new LineChart<Number,Number>(xAxis,yAxis);
         lineChart.setTitle("Series");
         lineChart.setCreateSymbols(false);
+        list = new ListView<>();
+        ObservableList<String> items = FXCollections.observableArrayList();
+        list.setItems(items);
         HBox hbox = new HBox();
-		hbox.getChildren().add(lineChart);
+		hbox.getChildren().addAll(list, lineChart);
 		tab.setContent(hbox);
 	}
 	
@@ -94,9 +98,18 @@ public class VueGraphique implements Observer{
 			series.getData().add(new XYChart.Data<Number, Number>(j, data.get(j)));
 		}
 	    lineChart.getData().add(series);
+	    addSerieListe(sg);
 	    chart.put(sg, series);
 	    editStyle(sg);
 	    this.updateLegend();
+	}
+	
+	/**
+	 * Ajoute une SerieGraph dans la liste des series
+	 * @param sg
+	 */
+	void addSerieListe(SerieGraph sg){
+		
 	}
 	
 	/**
