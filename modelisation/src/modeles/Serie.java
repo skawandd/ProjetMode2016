@@ -181,9 +181,11 @@ public class Serie extends Observable{
 		return transformationMoyMobilePonderee(ordre, ponderation);
 	}
 
+	/*
 	public Serie residus(Serie s){
 		//TODO analyse des résidus 2.4.2
 	}
+	*/
 	
 	public String getNom(){ return nomSerie; }
 	public void setNom(String nom){ nomSerie = nom; }
