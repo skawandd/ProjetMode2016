@@ -9,13 +9,16 @@ import java.util.Set;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tab;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import modeles.GraphModel;
 import modeles.Serie;
@@ -54,6 +57,7 @@ public class VueGraphique implements Observer{
         list = new ListView<>();
         ObservableList<String> items = FXCollections.observableArrayList();
         list.setItems(items);
+        list.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         HBox hbox = new HBox();
 		hbox.getChildren().addAll(list, lineChart);
 		tab.setContent(hbox);
@@ -84,6 +88,19 @@ public class VueGraphique implements Observer{
 			series.getData().add(new XYChart.Data<Number, Number>(j, data.get(j)));
 		}
 	    lineChart.getData().add(series);
+	    
+	    series.getNode().addEventHandler(MouseEvent.MOUSE_ENTERED, e->{
+	    	Node node = chart.get(sg).getNode();
+	    	node.setStyle("-fx-stroke-width: 5px;");
+	    });
+	    series.getNode().addEventHandler(MouseEvent.MOUSE_EXITED_TARGET,  e->{
+	    	Node node = chart.get(sg).getNode();
+	    	node.setStyle("-fx-stroke-width: 3px;");
+	    });
+	    series.getNode().addEventHandler(MouseEvent.MOUSE_CLICKED, e->{
+	    	list.getSelectionModel().select(sg.getNom());
+	    });
+	    
 	    addSerieListe(sg);
 	    chart.put(sg, series);
 	    editStyle(sg);
@@ -144,7 +161,6 @@ public class VueGraphique implements Observer{
 					Set<Node> nodes = lineChart.lookupAll(".default-color"+(i++));
 					int rgb[] = sg.getRgb();
 					for(Node node : nodes){
-						System.out.println("ok");
 						node.setStyle("-fx-background-color: rgb("+rgb[0]+","+rgb[1]+","+rgb[2]+")");
 					}
 				}
