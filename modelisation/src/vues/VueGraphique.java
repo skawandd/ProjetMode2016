@@ -5,32 +5,18 @@ import java.util.LinkedHashMap;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
-import java.io.File;
-
-
-
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import modeles.GraphModel;
 import modeles.Serie;
 import modeles.SerieGraph;
@@ -82,6 +68,7 @@ public class VueGraphique implements Observer{
 		for(SerieGraph sg : ALseries){
 			this.addCourbe(sg);
 		}
+		this.updateLegend();
     }
     
 	/**
@@ -94,7 +81,6 @@ public class VueGraphique implements Observer{
 		Serie s = sg.getSerie();
 	    HashMap<Integer, Double> data = s.getSerie();
 		for(Integer j : data.keySet()){
-			System.out.println(sg.getSerie().getNom()+" : "+j+" : "+data.get(j));
 			series.getData().add(new XYChart.Data<Number, Number>(j, data.get(j)));
 		}
 	    lineChart.getData().add(series);
@@ -155,9 +141,10 @@ public class VueGraphique implements Observer{
 		    public void run() {
 				int i = 0;
 				for(SerieGraph sg : chart.keySet()){
-					Set<Node> nodes = lineChart.lookupAll(".default-color"+(i++)+".chart-line-symbol");
+					Set<Node> nodes = lineChart.lookupAll(".default-color"+(i++));
 					int rgb[] = sg.getRgb();
 					for(Node node : nodes){
+						System.out.println("ok");
 						node.setStyle("-fx-background-color: rgb("+rgb[0]+","+rgb[1]+","+rgb[2]+")");
 					}
 				}
