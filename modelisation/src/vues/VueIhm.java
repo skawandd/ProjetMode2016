@@ -78,7 +78,6 @@ public class VueIhm implements Observer{
 		gm.addObserver(vg);
 		gm.release();
 		gms.add(gm);
-		
 	}
 	
 	
