@@ -18,6 +18,8 @@ import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import modeles.GraphModel;
@@ -29,7 +31,7 @@ public class VueGraphique implements Observer{
  
 	Tab tab;
 	LineChart<Number, Number> lineChart;
-	ListView<String> list;
+	TreeView<String> treeView;
 	LinkedHashMap<SerieGraph, XYChart.Series<Number, Number>> chart;
 	GraphModel gm;
 	
@@ -54,12 +56,11 @@ public class VueGraphique implements Observer{
         lineChart = new LineChart<Number,Number>(xAxis,yAxis);
         lineChart.setTitle("Series");
         lineChart.setCreateSymbols(false);
-        list = new ListView<>();
-        ObservableList<String> items = FXCollections.observableArrayList();
-        list.setItems(items);
-        list.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        TreeItem<String> root = new TreeItem<>("Hided");
+        treeView = new TreeView<>(root);
+        treeView.setShowRoot(false);
         HBox hbox = new HBox();
-		hbox.getChildren().addAll(list, lineChart);
+		hbox.getChildren().addAll(treeView, lineChart);
 		tab.setContent(hbox);
 	}
 	
@@ -98,21 +99,39 @@ public class VueGraphique implements Observer{
 	    	node.setStyle("-fx-stroke-width: 3px;");
 	    });
 	    series.getNode().addEventHandler(MouseEvent.MOUSE_CLICKED, e->{
-	    	list.getSelectionModel().select(sg.getNom());
+	    	//list.getSelectionModel().select(sg.getNom());
 	    });
 	    
-	    addSerieListe(sg);
+	    updateSerieListe();
 	    chart.put(sg, series);
 	    editStyle(sg);
 	    this.updateLegend();
 	}
 	
 	/**
-	 * Ajoute une SerieGraph dans la liste des series
-	 * @param sg
+	 * Met a jour la liste des Series disponibles dans le graph
 	 */
-	void addSerieListe(SerieGraph sg){
-		
+	void updateSerieListe(){
+		int j;
+		ArrayList<SerieGraph> series = gm.getSeries();
+		TreeItem<String> root = treeView.getRoot();
+		ArrayList<TreeItem<String>> l = new ArrayList<>();
+		root.getChildren().clear();
+		for(int i=0; i<series.size(); i++){
+			Serie s = series.get(i).getSerie();
+			TreeItem<String> ti = new TreeItem<>(series.get(i).getNom());
+			if(i > 0 && ( s.isBrother(series.get(i-1).getSerie()) || s.hasParent(series.get(i-1).getSerie()) ) ){
+				if(s.isBrother(series.get(i-1).getSerie())){
+					for(j = i; s.isBrother(series.get(j).getSerie()); j--){}
+					l.get(j).getChildren().add(ti);
+				}else{
+					l.get(i-1).getChildren().add(ti);
+				}
+			}else{
+				root.getChildren().add(ti);
+			}
+			l.add(ti);
+		}
 	}
 	
 	/**
