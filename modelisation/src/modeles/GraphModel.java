@@ -95,17 +95,14 @@ public class GraphModel extends Observable implements Observer{
 		
 		for(SerieGraph s : series){
 			j = 0;
-			Serie parent = s.getSerie().getParent();
-			for(i=0; i<futureSeries.size(); i++){
+			for(i=futureSeries.size()-1; i>=0; i--){
 				Serie s2 = futureSeries.get(i).getSerie();
-				if(s2 == parent){
-					for(; i<futureSeries.size(); i++){
-						if(!s2.getChildrens().contains(futureSeries.get(i).getSerie()))
-							break;
-					}
+				if(s.getSerie().hasParent(s2)){
+					i++;
+					break;
 				}
 			}
-			futureSeries.add(i, s);
+			futureSeries.add(i >= 0 ? i : 0, s);
 		}
 		
 		series = futureSeries;

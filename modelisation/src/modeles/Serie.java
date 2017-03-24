@@ -76,7 +76,7 @@ public class Serie extends Observable{
 		return serie.getParent().getChildrens().contains(this);
 	}
 	
-	public boolean isParent(Serie serie){
+	public boolean hasParent(Serie serie){
 		Serie s = this;
 		while( (s = s.parent) != null ){
 			if(serie == s) return true;
