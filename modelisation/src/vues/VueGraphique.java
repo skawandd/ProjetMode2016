@@ -120,7 +120,7 @@ public class VueGraphique implements Observer{
 		for(int i=0; i<series.size(); i++){
 			Serie s = series.get(i).getSerie();
 			TreeItem<String> ti = new TreeItem<>(series.get(i).getNom());
-			if(i > 0 && ( s.isBrother(series.get(i-1).getSerie()) || s.hasParent(series.get(i-1).getSerie()) ) ){
+			if(i > 0 && ( s.isBrother(series.get(i-1).getSerie()) || s.isParent(series.get(i-1).getSerie()) ) ){
 				if(s.isBrother(series.get(i-1).getSerie())){
 					for(j = i; s.isBrother(series.get(j).getSerie()); j--){}
 					l.get(j).getChildren().add(ti);

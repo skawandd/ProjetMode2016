@@ -75,23 +75,46 @@ public class GraphModel extends Observable implements Observer{
 	 * Organise les series en fonctions des parents <-> enfants
 	 */
 	public void organise(){
-		int i, j = 0;
+		int i, j = 0, k, index= 0;
 		ArrayList<SerieGraph> futureSeries = new ArrayList<>();
+		for(i=0 ; i<series.size(); i++){
+			k = -1;
+			for(j=i; j<series.size(); j++){
+				if(k == -1 || k > series.get(j).getSerie().getNbParent()){
+					index = j;
+					k = series.get(j).getSerie().getNbParent();
+				}
+			}
+			if(k != -1 && series.get(index) != series.get(i)){
+				series.add(i, series.get(index));
+				series.remove(index+1);
+				series.add(series.get(i+1));
+				series.remove(i+1);
+			}else break;
+		}
+		
 		for(SerieGraph s : series){
+			j = 0;
 			Serie parent = s.getSerie().getParent();
 			for(i=0; i<futureSeries.size(); i++){
 				Serie s2 = futureSeries.get(i).getSerie();
 				if(s2 == parent){
-					for(j=i; j<futureSeries.size(); j++){
-						if(!s2.getChildrens().contains(futureSeries.get(j).getSerie()))
+					for(; i<futureSeries.size(); i++){
+						if(!s2.getChildrens().contains(futureSeries.get(i).getSerie()))
 							break;
 					}
 				}
 			}
-			futureSeries.add(j, s);
+			futureSeries.add(i, s);
 		}
+		
 		series = futureSeries;
+		
+		for(SerieGraph s : series){
+			System.out.println(s.getNom());
+		}
 	}
+
 	
 	public void release(){
 		this.release(new Updater("creer", series));

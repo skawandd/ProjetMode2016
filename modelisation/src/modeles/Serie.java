@@ -76,15 +76,31 @@ public class Serie extends Observable{
 		return serie.getParent().getChildrens().contains(this);
 	}
 	
-	public boolean hasParent(Serie serie){
+	public boolean isParent(Serie serie){
+		Serie s = this;
+		while( (s = s.parent) != null ){
+			if(serie == s) return true;
+		}
+		return false;
+	}
+	
+	public int getNbParent(){
+		int compteur = 0;
+		Serie s = this;
+		while( (s=s.parent) != null ){
+			compteur++;
+		}
+		return compteur;
+	}
+	
+	public boolean isSameFamily(Serie serie){
 		Serie s = getOldestParent();
 		if(s == null) return false;
 		LinkedList<Serie> fifo = new LinkedList<>();
 		fifo.add(s);
 		while(!fifo.isEmpty()){
 			s = fifo.getFirst();
-			if(parent == s) return true;
-			System.out.println(this.nomSerie+" n'est pas enfant de "+serie.nomSerie+" ( "+s.nomSerie+" ) ");
+			if(serie == s) return true;
 			fifo.removeFirst();
 			for(Serie child : s.childrens)
 				fifo.add(child);
