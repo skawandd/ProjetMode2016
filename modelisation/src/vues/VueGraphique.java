@@ -10,12 +10,15 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TreeItem;
@@ -102,6 +105,21 @@ public class VueGraphique implements Observer{
 	    	//list.getSelectionModel().select(sg.getNom());
 	    });
 	    
+	    ContextMenu cm = new ContextMenu();
+	    MenuItem transformation = new MenuItem("Transformation");
+	    transformation.setOnAction(new EventHandler<ActionEvent>(){
+	    	public void handle(ActionEvent e){
+	    		TreeItem<String> ti = treeView.getSelectionModel().getSelectedItem();
+	    		if(ti == null) return;
+	    	}
+	    });
+	    MenuItem analyse = new MenuItem("Analyse");
+	    MenuItem exporter = new MenuItem("Exporter");
+	    MenuItem propriete = new MenuItem("Propriete");
+	    MenuItem supprimer = new MenuItem("Supprimer");
+	    cm.getItems().addAll(transformation, analyse, exporter, propriete, supprimer);
+	    treeView.setContextMenu(cm);
+	    
 	    updateSerieListe();
 	    chart.put(sg, series);
 	    editStyle(sg);
@@ -126,9 +144,10 @@ public class VueGraphique implements Observer{
 					l.get(j).getChildren().add(ti);
 				}else{
 					for(j = i; j >= 0; j--){
-						if(s.hasParent(series.get(j).getSerie()))
+						if(s.hasParent(series.get(j).getSerie())){
 							l.get(j).getChildren().add(ti);
 							break;
+						}
 					}
 				}
 			}else{

@@ -8,6 +8,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
@@ -43,6 +44,9 @@ public class VueIhm implements Observer{
 		VBox vbox = new VBox();
 		menuBar.setUseSystemMenuBar(true);
 		Menu fileMenu = new Menu("Fichier"); 
+		MenuItem importcsv = new MenuItem("Importer une serie depuis un csv");
+		MenuItem importweb = new MenuItem("Importer depuis un serveur web");
+		fileMenu.getItems().addAll(importcsv, importweb);
 		Menu editMenu = new Menu("Edition"); 
 		Menu helpMenu = new Menu("Aide");
 		menuBar.getMenus().setAll(fileMenu, editMenu, helpMenu);
