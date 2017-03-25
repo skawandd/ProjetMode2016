@@ -5,6 +5,7 @@ import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Observable;
 import java.util.Set;
 
@@ -25,6 +26,7 @@ public class Serie extends Observable{
 	
 	public Serie(){
 		this.entrees = new HashMap<Integer, Double>();
+		childrens = new ArrayList<>();
 	}
 	
 	/**
@@ -33,13 +35,14 @@ public class Serie extends Observable{
 	 */
 	
 	Serie(File file){
-		nomSerie = file.getName();
+		nomSerie = nameWithOutExtension(file.getName());
 		csv = new CSVDecoder(file);
 		try{
 			entrees = csv.decodeCsv();
 		}catch(IOException e){
 			
 		}
+		childrens = new ArrayList<>();
 	}
 	
 	/**
@@ -52,10 +55,57 @@ public class Serie extends Observable{
 		this.nomSerie = nomSerie;
 		this.parent = parent;
 		this.entrees = h;
+		childrens = new ArrayList<>();
 	}
 	
 	public String nameWithOutExtension(String nomSerie){
-		return this.nomSerie.substring(0, this.nomSerie.indexOf(".csv"));
+		return nomSerie.substring(0, nomSerie.indexOf(".csv"));
+	}
+	
+	public Serie getOldestParent(){
+		Serie s = this;
+		if(s.parent == null) return null;
+		while(s.parent != null){
+			s = s.parent;
+		}
+		return s;
+	}
+	
+	public boolean isBrother(Serie serie){
+		if(serie.getParent() == null) return false;
+		return serie.getParent().getChildrens().contains(this);
+	}
+	
+	public boolean hasParent(Serie serie){
+		Serie s = this;
+		while( (s = s.parent) != null ){
+			if(serie == s) return true;
+		}
+		return false;
+	}
+	
+	public int getNbParent(){
+		int compteur = 0;
+		Serie s = this;
+		while( (s=s.parent) != null ){
+			compteur++;
+		}
+		return compteur;
+	}
+	
+	public boolean isSameFamily(Serie serie){
+		Serie s = getOldestParent();
+		if(s == null) return false;
+		LinkedList<Serie> fifo = new LinkedList<>();
+		fifo.add(s);
+		while(!fifo.isEmpty()){
+			s = fifo.getFirst();
+			if(serie == s) return true;
+			fifo.removeFirst();
+			for(Serie child : s.childrens)
+				fifo.add(child);
+		}
+		return false;
 	}
 	
 	/**
@@ -67,7 +117,8 @@ public class Serie extends Observable{
 		for(Integer j : entrees.keySet())
 			if(entrees.get(j) > 0) h.put(j, Math.log(entrees.get(j)));
 			else return null;
-		Serie serie = new Serie(nameWithOutExtension(this.nomSerie)+"_log", this, h);
+		Serie serie = new Serie(this.nomSerie+"_log", this, h);
+		childrens.add(serie);
 		this.setChanged();
 		this.notifyObservers(serie);
 		return serie;
@@ -87,9 +138,10 @@ public class Serie extends Observable{
 		}else{
 			HashMap<Integer, Double> h = new HashMap<>();
 			for(Integer j : entrees.keySet())
-			h.put(j,((Math.pow(entrees.get(j), lambda))-1)/lambda);
-			serie = new Serie(nameWithOutExtension(this.nomSerie)+"_BoxCox", this, h);
+				h.put(j,((Math.pow(entrees.get(j), lambda))-1)/lambda);
+			serie = new Serie(this.nomSerie+"_BoxCox", this, h);
 		}
+		childrens.add(serie);
 		this.setChanged();
 		this.notifyObservers(serie);
 		return serie;
@@ -108,7 +160,8 @@ public class Serie extends Observable{
 			t = Math.log(entrees.get(j)/(1 - entrees.get(j)));
 			h.put(j, t);
 		}
-		Serie serie = new Serie(nameWithOutExtension(this.nomSerie)+"_logistique", this, h);
+		Serie serie = new Serie(this.nomSerie+"_logistique", this, h);
+		childrens.add(serie);
 		this.setChanged();
 		this.notifyObservers(serie);
 		return serie;
@@ -174,6 +227,7 @@ public class Serie extends Observable{
 		Serie serie;
 		if(Arrays.stream(ponderation).distinct().count() == 1) serie = new Serie(this.nomSerie+"_LissMoyMob"+ordre, this, hm);
 		else serie = new Serie(this.nomSerie+"_LissMoyMobPond"+ordre, this, hm);
+		childrens.add(serie);
 		this.setChanged();
 		this.notifyObservers(serie);
 		return serie;
@@ -195,6 +249,11 @@ public class Serie extends Observable{
 		return transformationMoyMobilePonderee(ordre, ponderation);
 	}
 
+	/*
+	public Serie residus(Serie s){
+		//TODO analyse des residus 2.4.2
+	}
+	*/
 	
 	public String getNom(){ return nomSerie; }
 	public void setNom(String nom){ nomSerie = nom; }

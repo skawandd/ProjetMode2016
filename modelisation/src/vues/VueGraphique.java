@@ -5,10 +5,6 @@ import java.util.LinkedHashMap;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
-import java.io.File;
-
-
-
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -16,21 +12,19 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListView;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import modeles.GraphModel;
 import modeles.Serie;
 import modeles.SerieGraph;
@@ -40,7 +34,7 @@ public class VueGraphique implements Observer{
  
 	Tab tab;
 	LineChart<Number, Number> lineChart;
-	ListView<String> list;
+	TreeView<String> treeView;
 	LinkedHashMap<SerieGraph, XYChart.Series<Number, Number>> chart;
 	GraphModel gm;
 	
@@ -65,11 +59,11 @@ public class VueGraphique implements Observer{
         lineChart = new LineChart<Number,Number>(xAxis,yAxis);
         lineChart.setTitle("Series");
         lineChart.setCreateSymbols(false);
-        list = new ListView<>();
-        ObservableList<String> items = FXCollections.observableArrayList();
-        list.setItems(items);
+        TreeItem<String> root = new TreeItem<>("Hided");
+        treeView = new TreeView<>(root);
+        treeView.setShowRoot(false);
         HBox hbox = new HBox();
-		hbox.getChildren().addAll(list, lineChart);
+		hbox.getChildren().addAll(treeView, lineChart);
 		tab.setContent(hbox);
 	}
 	
@@ -82,6 +76,7 @@ public class VueGraphique implements Observer{
 		for(SerieGraph sg : ALseries){
 			this.addCourbe(sg);
 		}
+		this.updateLegend();
     }
     
 	/**
@@ -94,22 +89,72 @@ public class VueGraphique implements Observer{
 		Serie s = sg.getSerie();
 	    HashMap<Integer, Double> data = s.getSerie();
 		for(Integer j : data.keySet()){
-			System.out.println(sg.getSerie().getNom()+" : "+j+" : "+data.get(j));
 			series.getData().add(new XYChart.Data<Number, Number>(j, data.get(j)));
 		}
 	    lineChart.getData().add(series);
-	    addSerieListe(sg);
+	    
+	    series.getNode().addEventHandler(MouseEvent.MOUSE_ENTERED, e->{
+	    	Node node = chart.get(sg).getNode();
+	    	node.setStyle("-fx-stroke-width: 5px;");
+	    });
+	    series.getNode().addEventHandler(MouseEvent.MOUSE_EXITED_TARGET,  e->{
+	    	Node node = chart.get(sg).getNode();
+	    	node.setStyle("-fx-stroke-width: 3px;");
+	    });
+	    series.getNode().addEventHandler(MouseEvent.MOUSE_CLICKED, e->{
+	    	//list.getSelectionModel().select(sg.getNom());
+	    });
+	    
+	    ContextMenu cm = new ContextMenu();
+	    MenuItem transformation = new MenuItem("Transformation");
+	    transformation.setOnAction(new EventHandler<ActionEvent>(){
+	    	public void handle(ActionEvent e){
+	    		TreeItem<String> ti = treeView.getSelectionModel().getSelectedItem();
+	    		if(ti == null) return;
+	    	}
+	    });
+	    MenuItem analyse = new MenuItem("Analyse");
+	    MenuItem exporter = new MenuItem("Exporter");
+	    MenuItem propriete = new MenuItem("Propriete");
+	    MenuItem supprimer = new MenuItem("Supprimer");
+	    cm.getItems().addAll(transformation, analyse, exporter, propriete, supprimer);
+	    treeView.setContextMenu(cm);
+	    
+	    updateSerieListe();
 	    chart.put(sg, series);
 	    editStyle(sg);
 	    this.updateLegend();
 	}
 	
 	/**
-	 * Ajoute une SerieGraph dans la liste des series
-	 * @param sg
+	 * Met a jour la liste des Series disponibles dans le graph
 	 */
-	void addSerieListe(SerieGraph sg){
-		
+	void updateSerieListe(){
+		int j;
+		ArrayList<SerieGraph> series = gm.getSeries();
+		TreeItem<String> root = treeView.getRoot();
+		ArrayList<TreeItem<String>> l = new ArrayList<>();
+		root.getChildren().clear();
+		for(int i=0; i<series.size(); i++){
+			Serie s = series.get(i).getSerie();
+			TreeItem<String> ti = new TreeItem<>(series.get(i).getNom());
+			if(i > 0 && s.isSameFamily(series.get(i-1).getSerie()) ){
+				if(s.isBrother(series.get(i-1).getSerie())){
+					for(j = i; s.isBrother(series.get(j).getSerie()); j--){}
+					l.get(j).getChildren().add(ti);
+				}else{
+					for(j = i; j >= 0; j--){
+						if(s.hasParent(series.get(j).getSerie())){
+							l.get(j).getChildren().add(ti);
+							break;
+						}
+					}
+				}
+			}else{
+				root.getChildren().add(ti);
+			}
+			l.add(ti);
+		}
 	}
 	
 	/**
@@ -155,7 +200,7 @@ public class VueGraphique implements Observer{
 		    public void run() {
 				int i = 0;
 				for(SerieGraph sg : chart.keySet()){
-					Set<Node> nodes = lineChart.lookupAll(".default-color"+(i++)+".chart-line-symbol");
+					Set<Node> nodes = lineChart.lookupAll(".default-color"+(i++));
 					int rgb[] = sg.getRgb();
 					for(Node node : nodes){
 						node.setStyle("-fx-background-color: rgb("+rgb[0]+","+rgb[1]+","+rgb[2]+")");

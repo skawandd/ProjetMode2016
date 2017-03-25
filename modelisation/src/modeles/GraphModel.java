@@ -56,6 +56,7 @@ public class GraphModel extends Observable implements Observer{
 		int colors[] = {c.getRed(), c.getGreen(), c.getBlue()};
 		sg.setRgb(colors);
 		series.add(sg);
+		organise();
 		sg.addObserver(this);
 		this.release(new Updater("ajouter", s));
 	}
@@ -74,18 +75,43 @@ public class GraphModel extends Observable implements Observer{
 	 * Organise les series en fonctions des parents <-> enfants
 	 */
 	public void organise(){
+		int i, j = 0, k, index= 0;
+		ArrayList<SerieGraph> futureSeries = new ArrayList<>();
+		for(i=0 ; i<series.size(); i++){
+			k = -1;
+			for(j=i; j<series.size(); j++){
+				if(k == -1 || k > series.get(j).getSerie().getNbParent()){
+					index = j;
+					k = series.get(j).getSerie().getNbParent();
+				}
+			}
+			if(k != -1 && series.get(index) != series.get(i)){
+				series.add(i, series.get(index));
+				series.remove(index+1);
+				series.add(series.get(i+1));
+				series.remove(i+1);
+			}else break;
+		}
 		
+		for(SerieGraph s : series){
+			j = 0;
+			for(i=futureSeries.size()-1; i>=0; i--){
+				Serie s2 = futureSeries.get(i).getSerie();
+				if(s.getSerie().hasParent(s2)){
+					i++;
+					break;
+				}
+			}
+			futureSeries.add(i >= 0 ? i : 0, s);
+		}
+		
+		series = futureSeries;
+		
+		for(SerieGraph s : series){
+			System.out.println(s.getNom());
+		}
 	}
-	
-	/**
-	 * Retourne la position dans d'une SerieGraph (ex 1.1.2 est le deuxieme enfant du premiere enfant d'une serie)
-	 * @param sg La SerieGraph dont on veut la position
-	 * @return
-	 */
-	public String getPos(SerieGraph sg){
-		organise();
-		return "1";
-	}
+
 	
 	public void release(){
 		this.release(new Updater("creer", series));
@@ -108,4 +134,7 @@ public class GraphModel extends Observable implements Observer{
 		this.nom = nom;
 	}
 	
+	public ArrayList<SerieGraph> getSeries(){
+		return series;
+	}
 }
