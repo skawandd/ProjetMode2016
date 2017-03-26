@@ -34,7 +34,7 @@ public class Serie extends Observable{
 	 * @param file
 	 */
 	
-	Serie(File file){
+	public Serie(File file){
 		nomSerie = nameWithOutExtension(file.getName());
 		csv = new CSVDecoder(file);
 		try{
@@ -51,7 +51,7 @@ public class Serie extends Observable{
 	 * @param parent La serie parent, ou null si elle n'en a pas
 	 * @param h Une HashMap avec le temps en abscisse et la valeur en ordonnee
 	 */
-	Serie(String nomSerie, Serie parent, HashMap<Integer, Double> h){
+	public Serie(String nomSerie, Serie parent, HashMap<Integer, Double> h){
 		this.nomSerie = nomSerie;
 		this.parent = parent;
 		this.entrees = h;
@@ -219,8 +219,8 @@ public class Serie extends Observable{
 	}
 	
 	/**
-	 * Effectue une transformation moyenne mobile ponderee avec des ponderations calculer celon la formule \
-	 * ponderation[i-] = (i^2)/sum(0, ordre/2+1, i^2)
+	 * Effectue une transformation moyenne mobile ponderee avec des ponderations calculer selon la formule \
+	 * ponderation[i-1] = (i^2)/sum(0, ordre/2+1, i^2)
 	 * @param ordre
 	 * @return La serie resultat ou null en cas d'erreur
 	 */
@@ -231,6 +231,7 @@ public class Serie extends Observable{
 		for(double i = 1; i <= ordrediv2; i++){
 			ponderation[(int)i-1] = (i*i)/sumCarre;
 		}
+		//System.out.println(ponderation);
 		return transformationMoyMobilePonderee(ordre, ponderation);
 	}
 
@@ -245,4 +246,5 @@ public class Serie extends Observable{
 	public HashMap<Integer, Double> getSerie(){ return entrees; }
 	public Serie getParent(){ return parent; }
 	public ArrayList<Serie> getChildrens(){ return childrens; }
+	public ArrayList<Double> getListSerie(){ return new ArrayList<Double>(entrees.values());}
 }
