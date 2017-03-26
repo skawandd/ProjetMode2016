@@ -165,23 +165,8 @@ public class Serie extends Observable{
 		this.setChanged();
 		this.notifyObservers(serie);
 		return serie;
-	}
-
-	
-
-	/*
-	 public Serie transformationLissageMoyMobile(int ordre){
-		HashMap<String, Double> h = new HashMap<>();
-		int k;
-		int nb;
-		if(ordre%2!=0 && ordre*2 <= entrees.size()){
-			k = (ordre - 1)/2;
-			nb = (int)(entrees.size()/ordre);
-			for(String j : entrees.keySet())
-				//TODO
-				
+	}			
 			
-=======
 	/**
 	 * La transformation moyenne mobile appel transformationMoyMobilePonderee avec des ponderations egales
 	 * En effet, ce n'est rien d'autre qu'une transformation moyenne mobile ponderee particuliere
