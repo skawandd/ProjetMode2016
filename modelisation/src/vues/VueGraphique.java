@@ -7,8 +7,6 @@ import java.util.Observer;
 import java.util.Set;
 
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -17,9 +15,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -29,12 +25,15 @@ import modeles.GraphModel;
 import modeles.Serie;
 import modeles.SerieGraph;
 import modeles.Updater;
+import utils.BothWayHashMap;
 
+@SuppressWarnings("unchecked")
 public class VueGraphique implements Observer{
  
 	Tab tab;
 	LineChart<Number, Number> lineChart;
 	TreeView<String> treeView;
+	BothWayHashMap<SerieGraph, TreeItem<String>> sgToTi;
 	LinkedHashMap<SerieGraph, XYChart.Series<Number, Number>> chart;
 	GraphModel gm;
 	
@@ -47,6 +46,7 @@ public class VueGraphique implements Observer{
 		this.tab = tab;
 		this.gm = gm;
 		chart = new LinkedHashMap<>();
+		sgToTi = new BothWayHashMap<>();
 	}
 	
 	/**
@@ -62,6 +62,26 @@ public class VueGraphique implements Observer{
         TreeItem<String> root = new TreeItem<>("Hided");
         treeView = new TreeView<>(root);
         treeView.setShowRoot(false);
+	    ContextMenu cm = new ContextMenu();
+	    MenuItem transformation = new MenuItem("Transformation");
+	    transformation.setOnAction(new EventHandler<ActionEvent>(){
+	    	public void handle(ActionEvent e){
+	    		TreeItem<String> ti = treeView.getSelectionModel().getSelectedItem();
+	    		if(ti == null) return;
+	    	}
+	    });
+	    MenuItem analyse = new MenuItem("Analyse");
+	    MenuItem exporter = new MenuItem("Exporter");
+	    MenuItem propriete = new MenuItem("Propriete");
+	    MenuItem supprimer = new MenuItem("Supprimer");
+	    supprimer.setOnAction(new EventHandler<ActionEvent>(){
+			public void handle(ActionEvent arg0) {
+				TreeItem<String> ti = treeView.getSelectionModel().getSelectedItem();
+				gm.removeSerie((SerieGraph)sgToTi.getByValue(ti));
+			}
+	    });
+	    cm.getItems().addAll(transformation, analyse, exporter, propriete, supprimer);
+	    treeView.setContextMenu(cm);
         HBox hbox = new HBox();
 		hbox.getChildren().addAll(treeView, lineChart);
 		tab.setContent(hbox);
@@ -102,24 +122,8 @@ public class VueGraphique implements Observer{
 	    	node.setStyle("-fx-stroke-width: 3px;");
 	    });
 	    series.getNode().addEventHandler(MouseEvent.MOUSE_CLICKED, e->{
-	    	//list.getSelectionModel().select(sg.getNom());
+	    	treeView.getSelectionModel().select((TreeItem<String>)sgToTi.get(sg));
 	    });
-	    
-	    ContextMenu cm = new ContextMenu();
-	    MenuItem transformation = new MenuItem("Transformation");
-	    transformation.setOnAction(new EventHandler<ActionEvent>(){
-	    	public void handle(ActionEvent e){
-	    		TreeItem<String> ti = treeView.getSelectionModel().getSelectedItem();
-	    		if(ti == null) return;
-	    	}
-	    });
-	    MenuItem analyse = new MenuItem("Analyse");
-	    MenuItem exporter = new MenuItem("Exporter");
-	    MenuItem propriete = new MenuItem("Propriete");
-	    MenuItem supprimer = new MenuItem("Supprimer");
-	    cm.getItems().addAll(transformation, analyse, exporter, propriete, supprimer);
-	    treeView.setContextMenu(cm);
-	    
 	    updateSerieListe();
 	    chart.put(sg, series);
 	    editStyle(sg);
@@ -138,6 +142,7 @@ public class VueGraphique implements Observer{
 		for(int i=0; i<series.size(); i++){
 			Serie s = series.get(i).getSerie();
 			TreeItem<String> ti = new TreeItem<>(series.get(i).getNom());
+			sgToTi.put(series.get(i),ti);
 			if(i > 0 && s.isSameFamily(series.get(i-1).getSerie()) ){
 				if(s.isBrother(series.get(i-1).getSerie())){
 					for(j = i; s.isBrother(series.get(j).getSerie()); j--){}
@@ -165,6 +170,8 @@ public class VueGraphique implements Observer{
 		Series<Number, Number> series = chart.get(sg);
 		lineChart.getData().remove(series);
 		chart.remove(sg);
+		updateSerieListe();
+		updateLegend();
 	}
 	
 	/**
@@ -210,7 +217,7 @@ public class VueGraphique implements Observer{
 		});
 	}
 	
-	@Override @SuppressWarnings("unchecked")
+	@Override
 	public void update(Observable arg0, Object arg1) {
 		Updater u = (Updater)arg1;
 		switch(u.getDescriptif()){

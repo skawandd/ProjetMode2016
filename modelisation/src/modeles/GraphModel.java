@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Represente un graphique avec une ou plusieurs series
@@ -44,11 +46,14 @@ public class GraphModel extends Observable implements Observer{
 	}
 	
 	/**
-	 * Ajoute une Serie au graphique
+	 * Ajoute une Serie au graphique et la renomme si il en existe une avec un nom identique
 	 * @param s
 	 */
 	public void addSerie(Serie s){
 		SerieGraph sg = new SerieGraph(s);
+		for(SerieGraph test : series)
+			if(sg.getSerie() == test.getSerie()) return;
+		checkNomSerie(sg);
 		double goldenRatioConj = 1.618033988749895;
 		float hue = new Random().nextFloat();
 		hue = (float) ((goldenRatioConj*(series.size()/(5*Math.random())))%1);
@@ -69,6 +74,28 @@ public class GraphModel extends Observable implements Observer{
 		sg.deleteObserver(this);
 		series.remove(sg);
 		this.release(new Updater("supprimer", sg));
+	}
+	
+	/**
+	 * Verifie que la serie ne porte pas le meme nom qu'une autre deja presente sur le graph
+	 * @param sg
+	 */
+	public void checkNomSerie(SerieGraph sg){
+		String nom = sg.getNom();
+		for(SerieGraph test : series){
+			if(nom.equals(test.getNom()) && test != sg){
+				if(sg.hasSameName()){
+					Matcher m = Pattern.compile("\\((\\d+)\\)$").matcher(nom);
+					m.find();
+					int number = Integer.parseInt(m.group(1))+1;
+					sg.setName(nom.substring(0, nom.length()-2)+number+")");
+				}else{
+					sg.setName(nom+"(1)");
+					sg.setSameName(true);
+				}
+				checkNomSerie(sg);
+			}
+		}
 	}
 	
 	/**
