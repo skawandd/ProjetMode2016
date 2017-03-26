@@ -165,9 +165,8 @@ public class Serie extends Observable{
 		this.setChanged();
 		this.notifyObservers(serie);
 		return serie;
-	}
-
-	
+	}			
+			
 	/**
 	 * La transformation moyenne mobile appel transformationMoyMobilePonderee avec des ponderations egales
 	 * En effet, ce n'est rien d'autre qu'une transformation moyenne mobile ponderee particuliere
