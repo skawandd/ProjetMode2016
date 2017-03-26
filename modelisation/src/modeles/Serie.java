@@ -165,9 +165,8 @@ public class Serie extends Observable{
 		this.setChanged();
 		this.notifyObservers(serie);
 		return serie;
-	}
-
-	
+	}			
+			
 	/**
 	 * La transformation moyenne mobile appel transformationMoyMobilePonderee avec des ponderations egales
 	 * En effet, ce n'est rien d'autre qu'une transformation moyenne mobile ponderee particuliere
@@ -195,14 +194,10 @@ public class Serie extends Observable{
 		if(ordre > entrees.size()) return null;
 		HashMap<Integer, Double> hm = new HashMap<>();
 		Integer[] e = entrees.keySet().toArray(new Integer[entrees.size()]);
-		/*for(int i = 0; i < ponderation.length; i++)
+		for(int i = 0; i < ponderation.length-1; i++)
 			coef += ponderation[i]*2;
-		if(ordre%2 == 0) coef -= ponderation[0]*2;
-		else coef -= ponderation[ponderation.length-1];*/
-		 for(int i = 0; i < ponderation.length-1; i++)
-			coef += ponderation[i]*2;
-	 	coef += ponderation[ponderation.length-1];
-	 	if(ordre%2 == 0) coef -= ponderation[0];
+		coef += ponderation[ponderation.length-1];
+		if(ordre%2 == 0) coef -= ponderation[0];
 		for(int i = ordre/2; i < entrees.size() - ordre/2; i++){
 			total = entrees.get(e[(i-ordre/2)])*ponderation[0] + entrees.get(e[(i+ordre/2)])*ponderation[0];
 			if(ordre%2==0) total /= 2;

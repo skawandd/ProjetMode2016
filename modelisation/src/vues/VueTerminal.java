@@ -84,8 +84,7 @@ public class VueTerminal implements Observer {
 		System.out.println("4) Lissage a l'aide d'une moyenne mobile simple d'ordre h");
 		System.out.println("5) Lissage a l'aide d'une moyenne mobile ponderee d'ordre h");
 		System.out.println("6) Calcul de la serie desaisonnalise");
-		System.out.println("7) Estimation d'une tendance lineaire avec une droite de la forme Xt = at + b = et");
-		System.out.println("8) Quitter");
+		System.out.println("7) Quitter");
 	}
 
 

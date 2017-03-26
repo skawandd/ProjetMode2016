@@ -13,6 +13,7 @@ public class SerieGraph extends Observable{
 	private boolean visible = true;
 	private Serie serie;
 	private String name; 		// le nom de la SerieGraph peut etre different de la Serie qu'elle reference
+	private boolean sameName = false;
 	
 	/**
 	 * Cree une nouvelle SerieGraph a partir d'une Serie
@@ -43,8 +44,10 @@ public class SerieGraph extends Observable{
 		this.release(new Updater("style", this));
 	}
 	
+	public void setSameName(boolean value){ sameName = value; }
 	public Serie getSerie(){ return serie; }
 	public boolean isVisible(){ return visible; }
+	public boolean hasSameName(){ return sameName; }
 	public int[] getRgb(){ return rgb; }
 	public String getNom(){ return name; }
 	
