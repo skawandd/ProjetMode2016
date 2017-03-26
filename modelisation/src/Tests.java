@@ -26,5 +26,10 @@ public class Tests extends TestCase{
 	public void runTest() throws IOException{
 		testCsv();
 	}
+	@Test
+	public void testTransformationLogarithmique() throws IOException {
+			
+		
+	}
 
 }

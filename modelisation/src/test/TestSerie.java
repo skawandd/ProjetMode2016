@@ -57,7 +57,19 @@ public class TestSerie extends TestCase{
 		assertEquals("Erreur TransformationMoyMobilePondereePaire", ((5/2)*pond[0] + 8*pond[1] + 68*pond[2] + 23*pond[1] + (-12/2)*pond[0])/(pond[0] + 2*pond[1] +pond[2]), (valeurs.transformationMoyMobilePonderee(4, pond)).getListSerie().get(1), 0.0001);
 		assertEquals("Erreur TransformationMoyMobilePondereePaire", ((8/2)*pond[0] + 68*pond[1] + 23*pond[2] - 12*pond[1] + (0/2)*pond[0])/(pond[0] + 2*pond[1] +pond[2]), (valeurs.transformationMoyMobilePonderee(4, pond)).getListSerie().get(2), 0.0001);
 	}
-	
+	@Test
+	public void testTransformationLogarithmique() throws IOException{
+		Serie val = new Serie(loadFile("ressources/valeurs.csv"));
+		Serie test= new Serie();
+		double[] rep= new double[3];
+		rep[0] = 1;
+		rep[1] = 0.6989700043;
+		rep[2] = 0.903089987;
+		assertEquals("Erreur dans le premier csv", rep[0], val.transformationLogarithmique().getListSerie().get(0), 0.0001);
+		assertEquals("Erreur dans le premier csv", rep[1], val.transformationLogarithmique().getListSerie().get(1), 0.0001);
+		assertEquals("Erreur dans le premier csv", rep[2], val.transformationLogarithmique().getListSerie().get(2), 0.0001);
+		
+	}
 	public void runTest() throws IOException{
 		testCsv();
 		testTransformationMoyMobile();
