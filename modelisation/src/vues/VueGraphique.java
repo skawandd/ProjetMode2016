@@ -19,6 +19,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import modeles.GraphModel;
@@ -64,23 +65,35 @@ public class VueGraphique implements Observer{
         treeView.setShowRoot(false);
 	    ContextMenu cm = new ContextMenu();
 	    MenuItem transformation = new MenuItem("Transformation");
-	    transformation.setOnAction(new EventHandler<ActionEvent>(){
-	    	public void handle(ActionEvent e){
+	    transformation.setOnAction( (e) ->{
 	    		TreeItem<String> ti = treeView.getSelectionModel().getSelectedItem();
 	    		if(ti == null) return;
-	    	}
 	    });
 	    MenuItem analyse = new MenuItem("Analyse");
 	    MenuItem exporter = new MenuItem("Exporter");
 	    MenuItem propriete = new MenuItem("Propriete");
+	    MenuItem masquer = new MenuItem("Masquer");
+	    masquer.setOnAction((e) -> {
+				TreeItem<String> ti = treeView.getSelectionModel().getSelectedItem();
+				SerieGraph sg = (SerieGraph)(sgToTi.getByValue(ti));
+				sg.setVisible(sg.isVisible()^true);
+	    });
+	    treeView.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
+	    	TreeItem<String> ti = treeView.getSelectionModel().getSelectedItem();
+	    	if(e.getButton() == MouseButton.SECONDARY && ti != null){
+	    		if(((SerieGraph)(sgToTi.getByValue(ti))).isVisible()){
+	    			masquer.setText("Masquer");
+	    		}else{
+	    			masquer.setText("Afficher");
+	    		}
+	    	}
+	    });
 	    MenuItem supprimer = new MenuItem("Supprimer");
-	    supprimer.setOnAction(new EventHandler<ActionEvent>(){
-			public void handle(ActionEvent arg0) {
+	    supprimer.setOnAction((e) -> {
 				TreeItem<String> ti = treeView.getSelectionModel().getSelectedItem();
 				gm.removeSerie((SerieGraph)sgToTi.getByValue(ti));
-			}
 	    });
-	    cm.getItems().addAll(transformation, analyse, exporter, propriete, supprimer);
+	    cm.getItems().addAll(transformation, analyse, exporter, propriete, masquer, supprimer);
 	    treeView.setContextMenu(cm);
         HBox hbox = new HBox();
 		hbox.getChildren().addAll(treeView, lineChart);
@@ -115,11 +128,11 @@ public class VueGraphique implements Observer{
 	    
 	    series.getNode().addEventHandler(MouseEvent.MOUSE_ENTERED, e->{
 	    	Node node = chart.get(sg).getNode();
-	    	node.setStyle("-fx-stroke-width: 5px;");
+	    	node.setStyle(node.getStyle()+" -fx-stroke-width: 6px;");
 	    });
 	    series.getNode().addEventHandler(MouseEvent.MOUSE_EXITED_TARGET,  e->{
 	    	Node node = chart.get(sg).getNode();
-	    	node.setStyle("-fx-stroke-width: 3px;");
+	    	node.setStyle(node.getStyle().substring(0, node.getStyle().length()- 22)+"-fx-stroke-width: 3px;");
 	    });
 	    series.getNode().addEventHandler(MouseEvent.MOUSE_CLICKED, e->{
 	    	treeView.getSelectionModel().select((TreeItem<String>)sgToTi.get(sg));
@@ -184,6 +197,7 @@ public class VueGraphique implements Observer{
 			lineChart.getData().add(series);
 		}else{
 			lineChart.getData().remove(series);
+			TreeItem<String> ti = (TreeItem<String>)sgToTi.get(sg);
 		}
 	}
     
@@ -207,10 +221,10 @@ public class VueGraphique implements Observer{
 		    public void run() {
 				int i = 0;
 				for(SerieGraph sg : chart.keySet()){
-					Set<Node> nodes = lineChart.lookupAll(".default-color"+(i++));
+					Set<Node> nodes = lineChart.lookupAll(".default-color"+(i++)+".chart-line-symbol");
 					int rgb[] = sg.getRgb();
 					for(Node node : nodes){
-						node.setStyle("-fx-background-color: rgb("+rgb[0]+","+rgb[1]+","+rgb[2]+")");
+						node.setStyle("-fx-background-color: rgb("+rgb[0]+","+rgb[1]+","+rgb[2]+");");
 					}
 				}
 		    }
