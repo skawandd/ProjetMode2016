@@ -17,11 +17,13 @@ import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.util.Callback;
 import modeles.GraphModel;
 import modeles.Serie;
 import modeles.SerieGraph;
@@ -95,6 +97,28 @@ public class VueGraphique implements Observer{
 	    });
 	    cm.getItems().addAll(transformation, analyse, exporter, propriete, masquer, supprimer);
 	    treeView.setContextMenu(cm);
+	    treeView.setEditable(true);
+	    treeView.setCellFactory(new Callback<TreeView<String>, TreeCell<String>>(){
+	    	@Override
+	    	public TreeCell<String> call(TreeView<String> p){
+	    		TreeItemWithNode tiwn = new TreeItemWithNode();
+	    		tiwn.setEventCallback(new Callback(){
+					public Object call(Object param){
+						if(tiwn.getTreeItem() == null) return null;
+						SerieGraph sg = (SerieGraph)sgToTi.getByValue(tiwn.getTreeItem());
+						XYChart.Series<Number, Number> series = chart.get(sg);
+				    	Node node = series.getNode();
+				    	if( ((MouseEvent)param).getEventType() == MouseEvent.MOUSE_ENTERED)
+				    		node.setStyle(node.getStyle()+" -fx-stroke-width: 6px;");
+				    	else if( ((MouseEvent)param).getEventType() == MouseEvent.MOUSE_EXITED)
+					    	node.setStyle(node.getStyle().substring(0, node.getStyle().length()- 22)+"-fx-stroke-width: 3px;");
+						return null;
+					}
+	    		});
+	    		return tiwn;
+	    		
+	    	}
+	    });
         HBox hbox = new HBox();
 		hbox.getChildren().addAll(treeView, lineChart);
 		tab.setContent(hbox);
@@ -109,7 +133,6 @@ public class VueGraphique implements Observer{
 		for(SerieGraph sg : ALseries){
 			this.addCourbe(sg);
 		}
-		this.updateLegend();
     }
     
 	/**
@@ -125,22 +148,33 @@ public class VueGraphique implements Observer{
 			series.getData().add(new XYChart.Data<Number, Number>(j, data.get(j)));
 		}
 	    lineChart.getData().add(series);
-	    
+	    chart.put(sg, series);
+	    setMouseEvents(series);
+	    updateSerieListe();
+	}
+	
+	public void setMouseEvents(Series<Number, Number> series){
 	    series.getNode().addEventHandler(MouseEvent.MOUSE_ENTERED, e->{
-	    	Node node = chart.get(sg).getNode();
+	    	Node node = series.getNode();
 	    	node.setStyle(node.getStyle()+" -fx-stroke-width: 6px;");
 	    });
 	    series.getNode().addEventHandler(MouseEvent.MOUSE_EXITED_TARGET,  e->{
-	    	Node node = chart.get(sg).getNode();
+	    	Node node = series.getNode();
 	    	node.setStyle(node.getStyle().substring(0, node.getStyle().length()- 22)+"-fx-stroke-width: 3px;");
 	    });
 	    series.getNode().addEventHandler(MouseEvent.MOUSE_CLICKED, e->{
+	    	SerieGraph sg = null;
+	    	for(SerieGraph temp : chart.keySet()){
+	    		if(chart.get(temp) == series){
+	    			sg = temp;
+	    		}
+	    	}
 	    	treeView.getSelectionModel().select((TreeItem<String>)sgToTi.get(sg));
 	    });
-	    updateSerieListe();
-	    chart.put(sg, series);
-	    editStyle(sg);
-	    this.updateLegend();
+	}
+	
+	public void treatMouseEvent(){
+		
 	}
 	
 	/**
@@ -184,7 +218,6 @@ public class VueGraphique implements Observer{
 		lineChart.getData().remove(series);
 		chart.remove(sg);
 		updateSerieListe();
-		updateLegend();
 	}
 	
 	/**
@@ -195,40 +228,11 @@ public class VueGraphique implements Observer{
 		Series<Number, Number> series = chart.get(sg);
 		if(sg.isVisible()){
 			lineChart.getData().add(series);
+			setMouseEvents(series);
 		}else{
 			lineChart.getData().remove(series);
 			TreeItem<String> ti = (TreeItem<String>)sgToTi.get(sg);
 		}
-	}
-    
-	/**
-	 * Modifie le style d'une courbe
-	 * @param sg
-	 */
-	public void editStyle(SerieGraph sg){
-	    Node node = chart.get(sg).getNode();
-	    int[] rgb = sg.getRgb();
-	    node.setStyle("-fx-stroke: rgb("+rgb[0]+", "+rgb[1]+", "+rgb[2]+");");
-	    this.updateLegend();
-	}
-
-	/**
-	 * Met a jour la legende
-	 */
-    public void updateLegend(){
-		Platform.runLater(new Runnable() {
-		    @Override
-		    public void run() {
-				int i = 0;
-				for(SerieGraph sg : chart.keySet()){
-					Set<Node> nodes = lineChart.lookupAll(".default-color"+(i++)+".chart-line-symbol");
-					int rgb[] = sg.getRgb();
-					for(Node node : nodes){
-						node.setStyle("-fx-background-color: rgb("+rgb[0]+","+rgb[1]+","+rgb[2]+");");
-					}
-				}
-		    }
-		});
 	}
 	
 	@Override
@@ -246,9 +250,6 @@ public class VueGraphique implements Observer{
 				break;
 			case "visibilite":
 				this.editVisibilite((SerieGraph)u.getArg());
-				break;
-			case "style":
-				this.editStyle((SerieGraph)u.getArg());
 				break;
 		}
 	}
