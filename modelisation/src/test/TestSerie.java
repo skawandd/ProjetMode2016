@@ -1,13 +1,7 @@
 package test;
-import static org.junit.Assert.assertArrayEquals;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
-import org.junit.Test;
-
-import junit.framework.TestCase;
 import modeles.Serie;
 import utils.CSVDecoder;
 import utils.Compatibilite;

@@ -219,7 +219,7 @@ public class Serie extends Observable{
 	}
 	
 	/**
-	 * Effectue une transformation moyenne mobile ponderee avec des ponderations calculer selon la formule \
+	 * Effectue une transformation moyenne mobile ponderee avec des ponderations calculees selon la formule \
 	 * ponderation[i-1] = (i^2)/sum(0, ordre/2+1, i^2)
 	 * @param ordre
 	 * @return La serie resultat ou null en cas d'erreur
@@ -235,11 +235,12 @@ public class Serie extends Observable{
 		return transformationMoyMobilePonderee(ordre, ponderation);
 	}
 
-	/*
-	public Serie residus(Serie s){
-		//TODO analyse des residus 2.4.2
+	
+	public Serie coeffSaisonnier(int ordre){
+		Serie moyMobil = transformationMoyMobile(ordre);
+		
 	}
-	*/
+	
 	
 	public String getNom(){ return nomSerie; }
 	public void setNom(String nom){ nomSerie = nom; }
