@@ -38,7 +38,7 @@ public class Serie extends Observable{
 		nomSerie = nameWithOutExtension(file.getName());
 		csv = new CSVDecoder(file);
 		try{
-			entrees = csv.decodeCsv();
+			entrees = csv.decodeCsv2();
 		}catch(IOException e){
 			
 		}
@@ -238,6 +238,7 @@ public class Serie extends Observable{
 	
 	public Serie coeffSaisonnier(int ordre){
 		Serie moyMobil = transformationMoyMobile(ordre);
+		return moyMobil;
 		
 	}
 	
