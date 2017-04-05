@@ -23,6 +23,7 @@ import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.shape.Line;
 import javafx.util.Callback;
 import modeles.GraphModel;
 import modeles.Serie;
@@ -37,7 +38,7 @@ public class VueGraphique implements Observer{
 	LineChart<Number, Number> lineChart;
 	TreeView<String> treeView;
 	BothWayHashMap<SerieGraph, TreeItem<String>> sgToTi;
-	LinkedHashMap<SerieGraph, XYChart.Series<Number, Number>> chart;
+	BothWayHashMap<SerieGraph, XYChart.Series<Number, Number>> chart;
 	GraphModel gm;
 	
 	/**
@@ -48,7 +49,7 @@ public class VueGraphique implements Observer{
 	public VueGraphique(Tab tab, GraphModel gm){
 		this.tab = tab;
 		this.gm = gm;
-		chart = new LinkedHashMap<>();
+		chart = new BothWayHashMap<>();
 		sgToTi = new BothWayHashMap<>();
 	}
 	
@@ -62,6 +63,7 @@ public class VueGraphique implements Observer{
         lineChart = new LineChart<Number,Number>(xAxis,yAxis);
         lineChart.setTitle("Series");
         lineChart.setCreateSymbols(false);
+        lineChart.setLegendVisible(false);
         TreeItem<String> root = new TreeItem<>("Hided");
         treeView = new TreeView<>(root);
         treeView.setShowRoot(false);
@@ -106,7 +108,7 @@ public class VueGraphique implements Observer{
 					public Object call(Object param){
 						if(tiwn.getTreeItem() == null) return null;
 						SerieGraph sg = (SerieGraph)sgToTi.getByValue(tiwn.getTreeItem());
-						XYChart.Series<Number, Number> series = chart.get(sg);
+						XYChart.Series<Number, Number> series = (Series<Number, Number>) chart.get(sg);
 				    	Node node = series.getNode();
 				    	if( ((MouseEvent)param).getEventType() == MouseEvent.MOUSE_ENTERED)
 				    		node.setStyle(node.getStyle()+" -fx-stroke-width: 6px;");
@@ -150,6 +152,7 @@ public class VueGraphique implements Observer{
 	    lineChart.getData().add(series);
 	    chart.put(sg, series);
 	    setMouseEvents(series);
+	    editStyle(sg);
 	    updateSerieListe();
 	}
 	
@@ -163,12 +166,7 @@ public class VueGraphique implements Observer{
 	    	node.setStyle(node.getStyle().substring(0, node.getStyle().length()- 22)+"-fx-stroke-width: 3px;");
 	    });
 	    series.getNode().addEventHandler(MouseEvent.MOUSE_CLICKED, e->{
-	    	SerieGraph sg = null;
-	    	for(SerieGraph temp : chart.keySet()){
-	    		if(chart.get(temp) == series){
-	    			sg = temp;
-	    		}
-	    	}
+	    	SerieGraph sg = (SerieGraph) chart.getByValue(series);
 	    	treeView.getSelectionModel().select((TreeItem<String>)sgToTi.get(sg));
 	    });
 	}
@@ -189,7 +187,11 @@ public class VueGraphique implements Observer{
 		for(int i=0; i<series.size(); i++){
 			Serie s = series.get(i).getSerie();
 			TreeItem<String> ti = new TreeItem<>(series.get(i).getNom());
-			sgToTi.put(series.get(i),ti);
+			Line line = new Line(0,12,12,0);
+			int rgb[] = series.get(i).getRgb();
+			line.setStyle("-fx-stroke: rgb("+rgb[0]+","+rgb[1]+","+rgb[2]+");");
+			ti.setGraphic(line);
+			sgToTi.put(series.get(i), ti);
 			if(i > 0 && s.isSameFamily(series.get(i-1).getSerie()) ){
 				if(s.isBrother(series.get(i-1).getSerie())){
 					for(j = i; s.isBrother(series.get(j).getSerie()); j--){}
@@ -214,7 +216,7 @@ public class VueGraphique implements Observer{
 	 * @param sg
 	 */
 	public void removeCourbe(SerieGraph sg){
-		Series<Number, Number> series = chart.get(sg);
+		Series<Number, Number> series = (Series<Number, Number>) chart.get(sg);
 		lineChart.getData().remove(series);
 		chart.remove(sg);
 		updateSerieListe();
@@ -225,14 +227,21 @@ public class VueGraphique implements Observer{
 	 * @param sg
 	 */
 	public void editVisibilite(SerieGraph sg){
-		Series<Number, Number> series = chart.get(sg);
+		Series<Number, Number> series = (Series<Number, Number>) chart.get(sg);
 		if(sg.isVisible()){
 			lineChart.getData().add(series);
 			setMouseEvents(series);
+			editStyle(sg);
 		}else{
 			lineChart.getData().remove(series);
 			TreeItem<String> ti = (TreeItem<String>)sgToTi.get(sg);
 		}
+	}
+	
+	public void editStyle(SerieGraph sg){
+		Node node = ((XYChart.Series<Number, Number>)chart.get(sg)).getNode();
+		int[] rgb = sg.getRgb();
+		node.setStyle("-fx-stroke: rgb("+rgb[0]+", "+rgb[1]+", "+rgb[2]+");");
 	}
 	
 	@Override
@@ -250,6 +259,9 @@ public class VueGraphique implements Observer{
 				break;
 			case "visibilite":
 				this.editVisibilite((SerieGraph)u.getArg());
+				break;
+			case "style":
+				this.editStyle((SerieGraph)u.getArg());
 				break;
 		}
 	}

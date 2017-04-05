@@ -1,6 +1,8 @@
 package vues;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TreeCell;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.Line;
 import javafx.util.Callback;
 
 public class TreeItemWithNode extends TreeCell<String> {
@@ -18,15 +20,6 @@ public class TreeItemWithNode extends TreeCell<String> {
 			cb.call(e);
 		});
 		
-		this.setOnMouseClicked( (e) -> {
-		        if(e.getButton().equals(e.getButton().PRIMARY)){
-		            if(e.getClickCount() == 2){
-		                System.out.println("#todo renommage");
-		            }
-		        }
-		    }
-		);
-		
 	}
 	
     @Override
@@ -35,10 +28,11 @@ public class TreeItemWithNode extends TreeCell<String> {
 
         if (empty) {
             setText(null);
+            setGraphic(null);
         } else {
+        	this.setGraphic(getTreeItem().getGraphic());
             setText(getItem() == null ? "" : getItem().toString());
         }
-        setGraphic(null);
     }
 	
 }
