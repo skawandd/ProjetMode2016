@@ -1,7 +1,9 @@
 package test;
 import java.io.File;
 import java.io.IOException;
-
+import static org.junit.Assert.*;
+import org.junit.Test;
+import junit.framework.TestCase;
 import modeles.Serie;
 import utils.CSVDecoder;
 import utils.Compatibilite;
