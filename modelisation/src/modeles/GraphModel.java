@@ -22,7 +22,7 @@ public class GraphModel extends Observable implements Observer{
 	public GraphModel(){
 		series = new ArrayList<SerieGraph>();
 		nom="Graphique "+cpt;
-		cpt++;
+		
 	}
 	
 	/**

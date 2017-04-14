@@ -20,8 +20,8 @@ public class SerieModel extends Observable implements Observer{
 	 * Charge une serie a partir d'un fichier csv
 	 * @param f
 	 */
-	public void addSerieFromFile(File f){
-		Serie s = new Serie(f);
+	public void addSerieFromFile(File f,int choix){
+		Serie s = new Serie(f,choix);
 		series.add(s);
 		s.addObserver(this);
 		this.setChanged();
@@ -57,6 +57,12 @@ public class SerieModel extends Observable implements Observer{
 		}
 	}
 	
+	
+	@Override
+	public String toString() {
+		return "SerieModel [series=" + series + "]";
+	}
+
 	public ArrayList<Serie> getSeries(){ return series; }
 	
 }

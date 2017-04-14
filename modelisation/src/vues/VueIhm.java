@@ -1,11 +1,20 @@
 package vues;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -15,15 +24,22 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import modeles.GraphModel;
+import modeles.Serie;
 import modeles.SerieModel;
+import utils.CSVDecoder;
+import utils.FileExplorer;
+import utils.graphCSV;
 
 public class VueIhm implements Observer{
 
 	Stage stage;
+	Stage stage1;
 	TabPane tabPane;
 	SerieModel sm;
 	ArrayList<GraphModel> gms;
-	
+	int choix;
+	ObservableList<String> items =FXCollections.observableArrayList ();
+	File file;
 	/**
 	 * Creer une IHM permettant de visualiser des courbes dans des graphiques, d'en charger, de les sauvegarder ...
 	 * @param s Le Stage dans lequel sera affiche l'ihm
@@ -60,6 +76,16 @@ public class VueIhm implements Observer{
 		    	}
 		      }
 		 });
+		
+		importcsv.setOnAction(new EventHandler<ActionEvent>() {
+		    public void handle(ActionEvent t) {
+		    	
+				test();
+				
+		    }
+		});
+		
+		
 		tabPane.getTabs().add(tabP);
 		vbox.getChildren().addAll(menuBar, tabPane);
 		Scene scene = new Scene(vbox, 800, 600);
@@ -83,9 +109,48 @@ public class VueIhm implements Observer{
 		gm.release();
 		gms.add(gm);
 	}
+	public void test(){
+		file = FileExplorer.getFile();
+		// TODO replacer avec une exception si fichier impossible a lire
+		
+		CSVDecoder csv= new CSVDecoder(file);
+		
+				
+					csv.decodeCsv3(file);
+				
+    	items=csv.getItems();
+    	System.out.println(items.toString());
+    	System.out.println("");
+    	graphCSV graph = new graphCSV(items);
+    	graph.CSV(stage,sm);
+    	//test2(choix);
+		}
+  public void test2(int choix){
+		
+		
+		System.out.println("Teste2");
+		System.out.println(choix);
+		System.out.println("");
+		File files = FileExplorer.getFile();
+		System.out.println(files.getName());
+		sm.addSerieFromFile(files, choix);
+		
+		VueTerminal vt = new VueTerminal(stage,sm);
+		System.out.println("");
+		vt.afficherSeries();
+		System.out.println("");
+		GraphModel gm = vt.traiterChoixSerie();
+		stage.setTitle("Resultat annalyse");
+		VueIhm vi = new VueIhm(stage, sm);
+		vi.lancer();
+		vi.creerNouveauGraph(gm);
+	}
 	
-	
-	
+	@Override
+	public String toString() {
+		return "VueIhm [items=" + items + "]";
+	}
+
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		// TODO Auto-generated method stub
