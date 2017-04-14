@@ -7,9 +7,13 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
+<<<<<<< HEAD
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+=======
+import javafx.collections.ObservableList;
+>>>>>>> 8fa03f0420f9aad87b07d0a2098d59d96b5e133e
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -146,11 +150,14 @@ public class VueIhm implements Observer{
 		vi.creerNouveauGraph(gm);
 	}
 	
+<<<<<<< HEAD
 	@Override
 	public String toString() {
 		return "VueIhm [items=" + items + "]";
 	}
 
+=======
+>>>>>>> 8fa03f0420f9aad87b07d0a2098d59d96b5e133e
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		// TODO Auto-generated method stub

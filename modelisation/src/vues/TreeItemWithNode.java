@@ -1,6 +1,13 @@
 package vues;
+<<<<<<< HEAD
 import javafx.scene.control.TreeCell;
 import javafx.scene.input.MouseEvent;
+=======
+import javafx.scene.control.TextField;
+import javafx.scene.control.TreeCell;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.Line;
+>>>>>>> 8fa03f0420f9aad87b07d0a2098d59d96b5e133e
 import javafx.util.Callback;
 
 public class TreeItemWithNode extends TreeCell<String> {
@@ -18,6 +25,7 @@ public class TreeItemWithNode extends TreeCell<String> {
 			cb.call(e);
 		});
 		
+<<<<<<< HEAD
 		this.setOnMouseClicked( (e) -> {
 		        if(e.getButton().equals(e.getButton().PRIMARY)){
 		            if(e.getClickCount() == 2){
@@ -27,6 +35,8 @@ public class TreeItemWithNode extends TreeCell<String> {
 		    }
 		);
 		
+=======
+>>>>>>> 8fa03f0420f9aad87b07d0a2098d59d96b5e133e
 	}
 	
     @Override
@@ -35,10 +45,18 @@ public class TreeItemWithNode extends TreeCell<String> {
 
         if (empty) {
             setText(null);
+<<<<<<< HEAD
         } else {
             setText(getItem() == null ? "" : getItem().toString());
         }
         setGraphic(null);
+=======
+            setGraphic(null);
+        } else {
+        	this.setGraphic(getTreeItem().getGraphic());
+            setText(getItem() == null ? "" : getItem().toString());
+        }
+>>>>>>> 8fa03f0420f9aad87b07d0a2098d59d96b5e133e
     }
 	
 }

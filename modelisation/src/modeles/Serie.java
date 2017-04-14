@@ -37,9 +37,17 @@ public class Serie extends Observable{
 	public Serie(File file,int choix){
 		nomSerie = nameWithOutExtension(file.getName());
 		csv = new CSVDecoder(file);
+<<<<<<< HEAD
 		
 			entrees = csv.decodeCsv2(file,choix);
 		
+=======
+		try{
+			entrees = csv.decodeCsv2();
+		}catch(IOException e){
+			
+		}
+>>>>>>> 8fa03f0420f9aad87b07d0a2098d59d96b5e133e
 		childrens = new ArrayList<>();
 	}
 	
