@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableListBase;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -19,7 +19,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import modeles.GraphModel;
+import modeles.Serie;
 import modeles.SerieModel;
+import modeles.Updater;
 
 public class VueIhm implements Observer{
 
@@ -27,6 +29,7 @@ public class VueIhm implements Observer{
 	TabPane tabPane;
 	SerieModel sm;
 	ArrayList<GraphModel> gms;
+	ObservableList<Serie> ol;
 	
 	/**
 	 * Creer une IHM permettant de visualiser des courbes dans des graphiques, d'en charger, de les sauvegarder ...
@@ -54,7 +57,7 @@ public class VueIhm implements Observer{
 		Menu editMenu = new Menu("Edition"); 
 		Menu helpMenu = new Menu("Aide");
 		menuBar.getMenus().setAll(fileMenu, editMenu, helpMenu);
-		
+		ol = FXCollections.observableArrayList();
 		Tab tabP = new Tab("+");
 		tabP.setOnSelectionChanged(new EventHandler<Event>() {
 		      @Override
@@ -77,11 +80,10 @@ public class VueIhm implements Observer{
 	 * @param gm Le modele graphique de reference
 	 */
 	public void creerNouveauGraph(GraphModel gm){
-		HBox hbox = new HBox();
 		Tab tab = new Tab(gm.getNom());
 		tabPane.getTabs().add(tabPane.getTabs().size()-1,tab);
 		tabPane.getSelectionModel().select(tab);
-		VueGraphique vg = new VueGraphique(tabPane.getSelectionModel().getSelectedItem(), gm);
+		VueGraphique vg = new VueGraphique(tabPane.getSelectionModel().getSelectedItem(), gm, ol);
 		vg.init();
 		gm.addObserver(vg);
 		gm.release();
@@ -90,7 +92,11 @@ public class VueIhm implements Observer{
 	
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
+		Updater u = (Updater)arg1;
+		switch(u.getDescriptif()){
+			case "ajouter":
+				ol.add((Serie)u.getArg());
+		}
 		
 	}
 

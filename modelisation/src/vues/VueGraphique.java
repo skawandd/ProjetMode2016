@@ -7,6 +7,8 @@ import java.util.Observer;
 import java.util.Set;
 
 import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -14,6 +16,7 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
@@ -23,6 +26,7 @@ import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.util.Callback;
 import modeles.GraphModel;
@@ -40,13 +44,15 @@ public class VueGraphique implements Observer{
 	BothWayHashMap<SerieGraph, TreeItem<String>> sgToTi;
 	BothWayHashMap<SerieGraph, XYChart.Series<Number, Number>> chart;
 	GraphModel gm;
+	ObservableList<Serie> ol;
 	
 	/**
 	 * Creer une nouvelle vue graphique
 	 * @param scene La scene dans laquelle le graphique apparaitra
 	 * @param gm Le GraphModel correspondant au graphique
 	 */
-	public VueGraphique(Tab tab, GraphModel gm){
+	public VueGraphique(Tab tab, GraphModel gm, ObservableList<Serie> ol){
+		this.ol = ol;
 		this.tab = tab;
 		this.gm = gm;
 		chart = new BothWayHashMap<>();
@@ -64,6 +70,13 @@ public class VueGraphique implements Observer{
         lineChart.setTitle("Series");
         lineChart.setCreateSymbols(false);
         lineChart.setLegendVisible(false);
+        ComboBox<String> cb = new ComboBox<String>();
+        cb.setEditable(true);
+        cb.setPromptText("serie ...");
+        updateCombo(cb);
+        ol.addListener((ListChangeListener<Serie>)e -> {
+        	updateCombo(cb);
+        });
         TreeItem<String> root = new TreeItem<>("Hided");
         treeView = new TreeView<>(root);
         treeView.setShowRoot(false);
@@ -122,7 +135,9 @@ public class VueGraphique implements Observer{
 	    	}
 	    });
         HBox hbox = new HBox();
-		hbox.getChildren().addAll(treeView, lineChart);
+        VBox vbox = new VBox();
+        vbox.getChildren().addAll(cb, treeView);
+		hbox.getChildren().addAll(vbox, lineChart);
 		tab.setContent(hbox);
 	}
 	
@@ -175,10 +190,17 @@ public class VueGraphique implements Observer{
 		
 	}
 	
+	private void updateCombo(ComboBox<String> cb){
+		cb.getItems().clear();
+		for(Serie s : ol){
+			cb.getItems().add(s.getNom());
+		}
+	}
+	
 	/**
 	 * Met a jour la liste des Series disponibles dans le graph
 	 */
-	void updateSerieListe(){
+	private void updateSerieListe(){
 		int j;
 		ArrayList<SerieGraph> series = gm.getSeries();
 		TreeItem<String> root = treeView.getRoot();
@@ -189,7 +211,7 @@ public class VueGraphique implements Observer{
 			TreeItem<String> ti = new TreeItem<>(series.get(i).getNom());
 			Line line = new Line(0,12,12,0);
 			int rgb[] = series.get(i).getRgb();
-			line.setStyle("-fx-stroke: rgb("+rgb[0]+","+rgb[1]+","+rgb[2]+");");
+			line.setStyle("-fx-stroke: rgb("+rgb[0]+","+rgb[1]+","+rgb[2]+"); -fx-stroke-width: 2px;");
 			ti.setGraphic(line);
 			sgToTi.put(series.get(i), ti);
 			if(i > 0 && s.isSameFamily(series.get(i-1).getSerie()) ){

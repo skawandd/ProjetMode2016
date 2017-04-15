@@ -22,10 +22,13 @@ public class SerieModel extends Observable implements Observer{
 	 */
 	public void addSerieFromFile(File f){
 		Serie s = new Serie(f);
+		for(Serie s2 : series){
+			if(s2.getNom() == s.getNom()) return;
+		}
 		series.add(s);
 		s.addObserver(this);
 		this.setChanged();
-		this.notifyObservers(s);
+		this.notifyObservers(new Updater("ajouter", s));
 	}
 	
 	public void addSerie(Serie s){
@@ -40,20 +43,13 @@ public class SerieModel extends Observable implements Observer{
 		
 	}
 	
-	/**
-	 * Trie les series pour que les enfants suivent les parents
-	 */
-	private void organise(){
-		
-	}
-	
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		if(arg1 instanceof Serie){					// evenement declenche par une Serie lorsqu'elle cree une nouvelle Serie.
 			series.add((Serie)arg1);
 			((Serie)arg1).addObserver(this);
 			this.setChanged();
-			this.notifyObservers((Serie)arg1);
+			this.notifyObservers(new Updater("ajouter", (Serie)arg1));
 		}
 	}
 	
