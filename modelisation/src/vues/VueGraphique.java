@@ -11,6 +11,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -65,6 +66,7 @@ public class VueGraphique implements Observer{
 	public void init(){
         final NumberAxis xAxis = new NumberAxis();
         final NumberAxis yAxis = new NumberAxis();
+        yAxis.setForceZeroInRange(false);
         xAxis.setLabel("Temps");
         lineChart = new LineChart<Number,Number>(xAxis,yAxis);
         lineChart.setTitle("Series");
@@ -73,6 +75,10 @@ public class VueGraphique implements Observer{
         ComboBox<String> cb = new ComboBox<String>();
         cb.setEditable(true);
         cb.setPromptText("serie ...");
+        cb.setMaxWidth(Double.MAX_VALUE);
+        cb.setOnAction( e->{
+        	gm.addSerie(ol.get(cb.getSelectionModel().getSelectedIndex()));
+        });
         updateCombo(cb);
         ol.addListener((ListChangeListener<Serie>)e -> {
         	updateCombo(cb);
@@ -137,6 +143,7 @@ public class VueGraphique implements Observer{
         HBox hbox = new HBox();
         VBox vbox = new VBox();
         vbox.getChildren().addAll(cb, treeView);
+        vbox.setMargin(cb, new Insets(10,0,0,0));
 		hbox.getChildren().addAll(vbox, lineChart);
 		tab.setContent(hbox);
 	}
@@ -184,10 +191,6 @@ public class VueGraphique implements Observer{
 	    	SerieGraph sg = (SerieGraph) chart.getByValue(series);
 	    	treeView.getSelectionModel().select((TreeItem<String>)sgToTi.get(sg));
 	    });
-	}
-	
-	public void treatMouseEvent(){
-		
 	}
 	
 	private void updateCombo(ComboBox<String> cb){

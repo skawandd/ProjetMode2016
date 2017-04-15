@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.Observable;
 import java.util.Set;
 
+import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
 import utils.CSVDecoder;
 
@@ -34,14 +35,12 @@ public class Serie extends Observable{
 	 * @param file
 	 */
 	
-	public Serie(File file){
-		nomSerie = nameWithOutExtension(file.getName());
+	public Serie(File file,int choixAbs, int choixOrd){
 		csv = new CSVDecoder(file);
-		try{
-			entrees = csv.decodeCsv2();
-		}catch(IOException e){
-			
-		}
+		csv.decodeCsv3();
+		ObservableList<String> items = csv.getItems();
+		nomSerie = nameWithOutExtension(file.getName())+"("+items.get(choixAbs)+"-"+items.get(choixOrd)+")";
+		entrees = csv.decodeCsv2(choixAbs, choixOrd);
 		childrens = new ArrayList<>();
 	}
 	

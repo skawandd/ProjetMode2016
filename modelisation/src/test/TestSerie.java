@@ -1,9 +1,13 @@
 package test;
 import java.io.File;
 import java.io.IOException;
+<<<<<<< HEAD
+
+=======
 import static org.junit.Assert.*;
 import org.junit.Test;
 import junit.framework.TestCase;
+>>>>>>> 8fa03f0420f9aad87b07d0a2098d59d96b5e133e
 import modeles.Serie;
 import utils.CSVDecoder;
 import utils.Compatibilite;

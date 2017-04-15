@@ -2,6 +2,7 @@ package utils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
@@ -26,7 +27,7 @@ public class CSVDecoder implements Observer{
 	
 	private File file;
 	int choix;
-	ObservableList<String> items =FXCollections.observableArrayList ();
+	ObservableList<String> items = FXCollections.observableArrayList ();
 	
 	public CSVDecoder(File file){
 		this.file = file;
@@ -54,98 +55,83 @@ public class CSVDecoder implements Observer{
 		return CSV;
 	}
 	
-	public HashMap<Integer, Double> decodeCsv2() throws IOException{
-		VBox vbox = new VBox();
-		ListView<String> list= new ListView <String>();
+	@SuppressWarnings("resource")
+	public HashMap<Integer, Double> decodeCsv2(int choixAbs, int choixOrd){
+
 		String elems[];
-		String elems1[];
 		String line;
-		FileInputStream fis;
+		FileInputStream fis = null;
 		Scanner sc = new Scanner(System.in);
 		HashMap<Integer, Double> CSV = new HashMap<Integer, Double>();
 		if(!file.canRead()) return null;
-		fis = new FileInputStream(file);
+		try {
+			fis = new FileInputStream(file);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-		line=br.readLine();
+		try {
+			line=br.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		try {
+			while((line = br.readLine()) != null){
+				elems = line.split(",");
+				System.out.println(elems[choixAbs]+" "+elems[choixOrd]);
+				CSV.put(Integer.parseInt(elems[choixAbs]), Double.parseDouble(elems[choixOrd]));
+			}
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			br.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return CSV;
+}
+	
+	/**
+	 * find column's title
+	 */
+	public void decodeCsv3() {
+
+		String elems[];
+		String elems1[];
+		String line = null;
+		//FileInputStream fis;
+		HashMap<Integer, Double> CSV = new HashMap<Integer, Double>();
+		FileInputStream fis = null;
+		try {
+			fis = new FileInputStream(file);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+		try {
+			line=br.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		elems1 = line.split(",");
 		
 		for(int i=0;i<elems1.length;i++){
 			items.add(elems1[i]);
 		}
-		
-
-		test();
-		System.out.println(choix);
-		
-		while((line = br.readLine()) != null){
-			elems = line.split(",");
-			if(elems.length == 7){
-			System.out.println(elems[0]);
-			System.out.println(elems[choix]);
-				CSV.put(Integer.parseInt(elems[0]), Double.parseDouble(elems[choix]));
-			}
-		}
-		br.close();
-		return CSV;
 }
-	
-	public void test(){
-		Stage stage= new Stage();
-		VBox vbox = new VBox();
-		ListView<String> list= new ListView <String>();
-		list.setItems(items);
-		list.getSelectionModel().getSelectedItem();
-		Button btn = new Button();
-		btn.setText("valider");
-		vbox.getChildren().addAll(btn);
-	
-		
-		
-		
-		//vbox.getChildren().addAll(list);
-		Scene scene = new Scene(vbox, 800,800);
-		
-		stage.setScene(scene);
-		 
-	    stage.show();
-	    
-	    /*list.setOnMouseClicked(f-> {
-            if(list.getSelectionModel().getSelectedIndex()==0){
-            	choix=0;
-            	stage.close();
-            }
-            if(list.getSelectionModel().getSelectedIndex()==1){
-            	choix=1;
-            	stage.close();
-            }
-            if(list.getSelectionModel().getSelectedIndex()==2){
-            	choix=2;
-            	stage.close();
-            }
-            if(list.getSelectionModel().getSelectedIndex()==3){
-            	choix=3;
-            	stage.close();
-            }
-            if(list.getSelectionModel().getSelectedIndex()==4){
-            	choix=4;
-            	stage.close();
-            }
-            if(list.getSelectionModel().getSelectedIndex()==5){
-            	choix=5;
-            	stage.close();
-            }
-            if(list.getSelectionModel().getSelectedIndex()==6){
-            	choix=6;
-            	stage.close();
-            }
-		
-			});
-		
-		*/
-		
-		
-	}
-	
+
 	/**
 	 * 
 	 * @param colonne
@@ -157,6 +143,19 @@ public class CSVDecoder implements Observer{
 		else if(colonne == 2) 
 			return decodeCsv().values().toArray(new Double[decodeCsv().values().size()]);
 		return null;
+	}
+
+
+	public ObservableList<String> getItems() {
+		return items;
+	}
+
+	public void setItems(ObservableList<String> items) {
+		this.items = items;
+	}
+	
+	public File getFile(){
+		return file;
 	}
 
 	@Override

@@ -23,6 +23,7 @@ public class GraphModel extends Observable implements Observer{
 		series = new ArrayList<SerieGraph>();
 		nom="Graphique "+cpt;
 		cpt++;
+		
 	}
 	
 	/**
@@ -63,7 +64,7 @@ public class GraphModel extends Observable implements Observer{
 		series.add(sg);
 		organise();
 		sg.addObserver(this);
-		this.release(new Updater("ajouter", s));
+		this.release(new Updater("ajouter", sg));
 	}
 	
 	/**
