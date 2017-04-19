@@ -29,6 +29,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import modeles.GraphModel;
 import modeles.Serie;
@@ -91,6 +92,7 @@ public class VueGraphique implements Observer{
 	    transformation.setOnAction( (e) ->{
 	    		TreeItem<String> ti = treeView.getSelectionModel().getSelectedItem();
 	    		if(ti == null) return;
+	    		new VueTransformation(new Stage());
 	    });
 	    MenuItem analyse = new MenuItem("Analyse");
 	    MenuItem exporter = new MenuItem("Exporter");
