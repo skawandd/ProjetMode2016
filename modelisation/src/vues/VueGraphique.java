@@ -1,16 +1,10 @@
 package vues;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Set;
-
-import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
@@ -29,6 +23,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import modeles.GraphModel;
@@ -78,11 +73,17 @@ public class VueGraphique implements Observer{
         cb.setPromptText("serie ...");
         cb.setMaxWidth(Double.MAX_VALUE);
         cb.setOnAction( e->{
-        	gm.addSerie(ol.get(cb.getSelectionModel().getSelectedIndex()));
+        	int index = cb.getSelectionModel().getSelectedIndex();
+        	if(index != -1)
+        		gm.addSerie(ol.get(index));
         });
         updateCombo(cb);
         ol.addListener((ListChangeListener<Serie>)e -> {
         	updateCombo(cb);
+        	e.next();
+        	if(e.wasAdded() && tab.isSelected()){
+        		gm.addSerie(ol.get(ol.size()-1));
+        	}
         });
         TreeItem<String> root = new TreeItem<>("Hided");
         treeView = new TreeView<>(root);
@@ -92,11 +93,20 @@ public class VueGraphique implements Observer{
 	    transformation.setOnAction( (e) ->{
 	    		TreeItem<String> ti = treeView.getSelectionModel().getSelectedItem();
 	    		if(ti == null) return;
-	    		new VueTransformation(new Stage());
+	    		Stage stage = new Stage();
+	    		stage.initModality(Modality.APPLICATION_MODAL);
+	    		new VueTransformation(stage, ((SerieGraph)(sgToTi.getByValue(ti))).getSerie() );
 	    });
 	    MenuItem analyse = new MenuItem("Analyse");
 	    MenuItem exporter = new MenuItem("Exporter");
 	    MenuItem propriete = new MenuItem("Propriete");
+	    propriete.setOnAction( (e) ->{
+    		TreeItem<String> ti = treeView.getSelectionModel().getSelectedItem();
+    		if(ti == null) return;
+    		Stage stage = new Stage();
+    		stage.initModality(Modality.APPLICATION_MODAL);
+    		new VueProprietes(stage, gm, ((SerieGraph)(sgToTi.getByValue(ti))) );
+	    });
 	    MenuItem masquer = new MenuItem("Masquer");
 	    masquer.setOnAction((e) -> {
 				TreeItem<String> ti = treeView.getSelectionModel().getSelectedItem();
@@ -145,7 +155,7 @@ public class VueGraphique implements Observer{
         HBox hbox = new HBox();
         VBox vbox = new VBox();
         vbox.getChildren().addAll(cb, treeView);
-        vbox.setMargin(cb, new Insets(10,0,0,0));
+        VBox.setMargin(cb, new Insets(10,0,0,0));
 		hbox.getChildren().addAll(vbox, lineChart);
 		tab.setContent(hbox);
 	}

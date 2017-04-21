@@ -14,7 +14,7 @@ public class GraphModel extends Observable implements Observer{
 	
 	ArrayList<SerieGraph> series;
 	String nom;
-	static int cpt=1;
+	static int cpt=0;
 
 	/**
 	 * Construit un nouveau modele graphique vide
@@ -23,7 +23,6 @@ public class GraphModel extends Observable implements Observer{
 		series = new ArrayList<SerieGraph>();
 		nom="Graphique "+cpt;
 		cpt++;
-		
 	}
 	
 	/**
@@ -97,6 +96,17 @@ public class GraphModel extends Observable implements Observer{
 				checkNomSerie(sg);
 			}
 		}
+	}
+	
+	
+	/**
+	 * Renomme une serie (en verifiant qu'elle ne porte pas le meme nom qu'une autre deja presente sur le graph)
+	 * @param sg
+	 */
+	public void renommerSerie(SerieGraph sg){
+		checkNomSerie(sg);
+		this.setChanged();
+		this.release(new Updater("renommer", sg));
 	}
 	
 	/**

@@ -1,16 +1,11 @@
 package modeles;
 import java.io.File;
-import java.io.IOException;
-import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Observable;
-import java.util.Set;
-
 import javafx.collections.ObservableList;
-import javafx.scene.chart.XYChart;
 import utils.CSVDecoder;
 
 /**
@@ -108,14 +103,24 @@ public class Serie extends Observable{
 	}
 	
 	/**
+	 * Verifie que la transformation logarithmique est realisable
+	 * @return true si elle est possible, false sinon
+	 */
+	public boolean checkLogarithmique(){
+		for(Integer j : entrees.keySet())
+			if(entrees.get(j) <= 0) return false;
+		return true;
+	}
+	
+	/**
 	 * Effectue la transformation logarithmique
 	 * @return La serie resultat ou null en cas d'erreur
 	 */
 	public Serie transformationLogarithmique(){
 		HashMap<Integer, Double> h = new HashMap<>();
+		if(!checkLogarithmique()) return null;
 		for(Integer j : entrees.keySet())
-			if(entrees.get(j) > 0) h.put(j, Math.log(entrees.get(j)));
-			else return null;
+			h.put(j, Math.log(entrees.get(j)));
 		Serie serie = new Serie(this.nomSerie+"_log", this, h);
 		childrens.add(serie);
 		this.setChanged();
@@ -147,15 +152,25 @@ public class Serie extends Observable{
 	}
 	
 	/**
+	 * Verifie si une transformation logistique est possible
+	 * @return true si elle est possible, false sinon
+	 */
+	public boolean checkLogistique(){
+		for(Integer j: entrees.keySet())
+			if(entrees.get(j) <= 0 || entrees.get(j) >= 1)
+				return false;
+		return true;
+	}
+	
+	/**
 	 * Effectue la transformation logistique
 	 * @return La serie resutlat ou null en cas d'erreur
 	 */
 	public Serie transformationLogistique(){
 		HashMap<Integer, Double> h = new HashMap<>();
 		Double t;
+		if(!checkLogistique()) return null;
 		for(Integer j: entrees.keySet()){
-			if(0 >= entrees.get(j) || entrees.get(j) >= 1)
-				return null;
 			t = Math.log(entrees.get(j)/(1 - entrees.get(j)));
 			h.put(j, t);
 		}

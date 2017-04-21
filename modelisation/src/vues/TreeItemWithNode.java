@@ -19,15 +19,6 @@ public class TreeItemWithNode extends TreeCell<String> {
 		this.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> {
 			cb.call(e);
 		});
-		
-		this.setOnMouseClicked( (e) -> {
-		        if(e.getButton().equals(e.getButton().PRIMARY)){
-		            if(e.getClickCount() == 2){
-		                System.out.println("#todo renommage");
-		            }
-		        }
-		    }
-		);
 	}
 	
     @Override
