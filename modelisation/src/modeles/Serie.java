@@ -250,10 +250,18 @@ public class Serie extends Observable{
 	}
 
 	
-	public Serie coeffSaisonnier(int ordre){
-		Serie moyMobil = transformationMoyMobile(ordre);
-		return moyMobil;
-		
+	
+	public Serie saisonnalite(int ordre){
+		Serie serie;
+		Serie serieMM = this.transformationMoyMobilePonderee(ordre);
+		Integer[] e = this.entrees.keySet().toArray(new Integer[entrees.size()]);
+		Integer[] eM = serieMM.entrees.keySet().toArray(new Integer[entrees.size()]);
+		HashMap<Integer, Double> hm = new HashMap<>();
+		for(int i = ordre/2  ; i < this.entrees.size() - ordre/2; i++){
+			hm.put(i,(double)( e[i]-eM[i-ordre/2]));
+		}
+		serie = new Serie(this.nomSerie + "_Saison" + ordre,this,hm);		
+		return serie;
 	}
 	
 	
