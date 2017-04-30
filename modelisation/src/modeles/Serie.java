@@ -415,6 +415,22 @@ public class Serie extends Observable{
 		return var / e.length;
 	}
 	
+	// Renvoie une valeur prévisionnelle pour un temps T donné
+	public double prevision(int ordre, int tempsT){
+		Integer[] test = this.entrees.keySet().toArray(new Integer[entrees.size()]);
+		if(test[entrees.size()-1] > tempsT) return 0;
+		Serie coeffSaisonniers = this.coeffSais(ordre);
+		Integer[] e = coeffSaisonniers.entrees.keySet().toArray(new Integer[entrees.size()]);
+		double coeffSaisonnierT = 0;
+		int j = 0;
+		for(int i = 0; i < tempsT + 1; i++){
+			if(j==ordre)
+				j=0;
+		}
+		coeffSaisonnierT = e[j];
+		return this.aCoeffDirect(ordre)*tempsT + this.bOrdonneOrigine(ordre) + coeffSaisonnierT;
+	}
+	
 	public String getNom(){ return nomSerie; }
 	public void setNom(String nom){ nomSerie = nom; }
 	public HashMap<Integer, Double> getSerie(){ return entrees; }
