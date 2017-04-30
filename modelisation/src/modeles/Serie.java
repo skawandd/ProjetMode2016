@@ -250,7 +250,7 @@ public class Serie extends Observable{
 	}
 
 	
-	
+	// En entrée série originale (sans transformations)
 	public Serie saisonnalite(int ordre){
 		Serie serie;
 		Serie serieMM = this.transformationMoyMobilePonderee(ordre);
@@ -264,6 +264,52 @@ public class Serie extends Observable{
 		return serie;
 	}
 	
+	//En entrée série saisonnalite
+	public Serie coeffSais(int ordre){
+		if(entrees.size() % ordre != 0) return null;
+		int nbIterations = entrees.size()/ordre;
+		Serie serie;
+		double total;
+		Integer[] e = this.entrees.keySet().toArray(new Integer[entrees.size()]);
+		HashMap<Integer, Double> hm = new HashMap<>();
+		for(int i = 0; i < ordre ; ++i){
+			total = 0;
+			for(int j = 0; j < nbIterations; j++){
+				total += e[i + j*ordre];
+			}
+			total /= nbIterations;
+			hm.put(i,total);
+		}
+		serie = new Serie(this.nomSerie + "_coeffSais" + ordre,this,hm);
+		return serie;
+	}
+	
+	// En entrée série coefficientsSais
+	public Serie coeffSaisNorm(int ordre){
+		if (entrees.size() != ordre) return null;
+		Serie serie;
+		Integer[] e = this.entrees.keySet().toArray(new Integer[entrees.size()]);
+		HashMap<Integer, Double> hm = new HashMap<>();
+		double somme = 0;
+		double coeff = 0;
+		for(int i = 0; i < ordre; i++){
+			somme += e[i];
+		}
+		for(int i = 0; i < ordre; i++){
+			coeff = entrees.get(e[i]) - ((1/ordre)*somme);
+			hm.put(e[i], coeff);
+		}
+		serie = new Serie(this.nomSerie + "_coeffSaisNorm" + ordre,this,hm);
+		return serie;
+	}
+	
+	//En entrée série originale (sans transformations)
+	/*
+	public Serie desaisonnalise(int ordre){
+		
+	}
+	
+	*/
 	
 	public String getNom(){ return nomSerie; }
 	public void setNom(String nom){ nomSerie = nom; }
