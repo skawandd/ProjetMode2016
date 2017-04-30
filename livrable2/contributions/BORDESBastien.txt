@@ -1,0 +1,16 @@
+Contribution:
+
+--> Complétés
+- Exercice type d'analyse sur excel et serie compatible csv pour tests
+- Extraction valeurs de la saisonnalité d'une série
+- Extraction des coefficients saisonniers d'une série
+
+--> Implémentation non complète
+- Normalisation des coefficients saisonniers
+- Désaisonnalisation d'une série
+- Calcul de la variance(T) d'une série
+- Calcul de la covaraince(T, ValeursX) d'une série
+- Calcul du coefficient directeur et de l'ordonnée à l'origine
+- Calcul des résidus
+- Calcul de la variance résiduelle
+- Calcul d'une prévision pour un T donné
