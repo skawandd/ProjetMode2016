@@ -29,12 +29,11 @@ public class Serie extends Observable{
 	 * Charge une serie a partir d'un fichier csv
 	 * @param file
 	 */
-	
-	public Serie(File file,int choixAbs, int choixOrd){
+	public Serie(File file,int choixAbs, int choixOrd, String name){
 		csv = new CSVDecoder(file);
 		csv.decodeCsv3();
 		ObservableList<String> items = csv.getItems();
-		nomSerie = nameWithOutExtension(file.getName())+"("+items.get(choixAbs)+"-"+items.get(choixOrd)+")";
+		nomSerie = nameWithOutExtension(name)+"("+items.get(choixAbs)+"-"+items.get(choixOrd)+")";
 		entrees = csv.decodeCsv2(choixAbs, choixOrd);
 		childrens = new ArrayList<>();
 	}
@@ -53,7 +52,10 @@ public class Serie extends Observable{
 	}
 	
 	public String nameWithOutExtension(String nomSerie){
-		return nomSerie.substring(0, nomSerie.indexOf(".csv"));
+		if(nomSerie.contains(".csv")){
+			return nomSerie.substring(0, nomSerie.indexOf(".csv"));
+		}
+		return nomSerie;
 	}
 	
 	public Serie getOldestParent(){
