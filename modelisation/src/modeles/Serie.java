@@ -326,8 +326,9 @@ public class Serie extends Observable{
 	}
 	
 	// Calcul la variance de temps d'un échantillon avec t = 1 à n
-	public double variance(){
-		Integer[] e = this.entrees.keySet().toArray(new Integer[entrees.size()]);
+	public double variance(int ordre){
+		Serie desais = this.desaisonnalise(ordre);
+		Integer[] e = desais.entrees.keySet().toArray(new Integer[entrees.size()]);
 		double var =0;
 		double somme = 0;
 		double moyenne = 0;
@@ -342,8 +343,9 @@ public class Serie extends Observable{
 	}
 	
 	// Calcul de la covariance
-	public double covariance(){
-		Integer[] e = this.entrees.keySet().toArray(new Integer[entrees.size()]);
+	public double covariance(int ordre){
+		Serie desais = this.desaisonnalise(ordre);
+		Integer[] e = desais.entrees.keySet().toArray(new Integer[entrees.size()]);
 		double covar =0;
 		double sommeT = 0;
 		double moyenneT = 0;
@@ -362,20 +364,21 @@ public class Serie extends Observable{
 	}
 	
 	//Renvoie le coefficient directeur de la droite: a dans (ax + b)
-	public double aCoeffDirect(){
-		return this.covariance() / this.variance();
+	public double aCoeffDirect(int ordre){
+		return this.covariance(ordre) / this.variance(ordre);
 	}
 	
 	// Renvoie l'ordonnée à l'origine: b dans (ax + b)
-	public double bOrdonneOrigine(){
-		Integer[] e = this.entrees.keySet().toArray(new Integer[entrees.size()]);
+	public double bOrdonneOrigine(int ordre){
+		Serie desais = this.desaisonnalise(ordre);
+		Integer[] e = desais.entrees.keySet().toArray(new Integer[entrees.size()]);
 		double sommeX = 0;
 		double moyenneX = 0;
 		for(int i = 0; i < e.length; i++){
 			sommeX += entrees.get(e[i]);
 		}
 		moyenneX = sommeX / e.length;
-		return moyenneX - this.aCoeffDirect();
+		return moyenneX - this.aCoeffDirect(ordre);
 	}
 	
 	// En entrée série originale, retourne la série résiduelle
@@ -383,8 +386,8 @@ public class Serie extends Observable{
 		Serie serie;
 		Serie serieDesais = this.desaisonnalise(ordre);
 		Integer[] e = serieDesais.entrees.keySet().toArray(new Integer[entrees.size()]);
-		double a = this.aCoeffDirect();
-		double b = this.bOrdonneOrigine();
+		double a = this.aCoeffDirect(ordre);
+		double b = this.bOrdonneOrigine(ordre);
 		double total = 0;
 		HashMap<Integer, Double> hm = new HashMap<>();
 		for(int i = 0; i < e.length; i++){
@@ -393,6 +396,23 @@ public class Serie extends Observable{
 		}
 		serie = new Serie(this.nomSerie + "_residus" + ordre,this,hm);
 		return serie;		
+	}
+	
+	// Renvoie la variance résiduelle d'une série
+	public double varianceResiduelle(int ordre){
+		Serie serieResiduelle = this.residus(ordre);
+		Integer[] e = serieResiduelle.entrees.keySet().toArray(new Integer[entrees.size()]);
+		double var =0;
+		double somme = 0;
+		double moyenne = 0;
+		for(int i = 0; i < e.length; i++){
+			somme += e[i];
+		}
+		moyenne = somme / e.length;
+		for (int i = 0; i < e.length; i++){
+			var += ((e[i]-moyenne)*(e[i]-moyenne));
+		}
+		return var / e.length;
 	}
 	
 	public String getNom(){ return nomSerie; }
