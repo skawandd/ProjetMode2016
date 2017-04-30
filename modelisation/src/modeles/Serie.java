@@ -325,7 +325,7 @@ public class Serie extends Observable{
 		return serie;
 	}
 	
-	// Calcul la variance de temps d'un échantillon
+	// Calcul la variance de temps d'un échantillon avec t = 1 à n
 	public double variance(){
 		Integer[] e = this.entrees.keySet().toArray(new Integer[entrees.size()]);
 		double var =0;
@@ -341,7 +341,59 @@ public class Serie extends Observable{
 		return var / e.length;
 	}
 	
+	// Calcul de la covariance
+	public double covariance(){
+		Integer[] e = this.entrees.keySet().toArray(new Integer[entrees.size()]);
+		double covar =0;
+		double sommeT = 0;
+		double moyenneT = 0;
+		double sommeX = 0;
+		double moyenneX = 0;
+		for(int i = 0; i < e.length; i++){
+			sommeT += i+1;
+			sommeX += entrees.get(e[i]);
+		}
+		moyenneT = sommeT / e.length;
+		moyenneX = sommeX / e.length;
+		for (int i = 0; i < e.length; i++){
+			covar += ((i+1-moyenneT)*(entrees.get(e[i])-moyenneX));
+		}
+		return covar / e.length;
+	}
 	
+	//Renvoie le coefficient directeur de la droite: a dans (ax + b)
+	public double aCoeffDirect(){
+		return this.covariance() / this.variance();
+	}
+	
+	// Renvoie l'ordonnée à l'origine: b dans (ax + b)
+	public double bOrdonneOrigine(){
+		Integer[] e = this.entrees.keySet().toArray(new Integer[entrees.size()]);
+		double sommeX = 0;
+		double moyenneX = 0;
+		for(int i = 0; i < e.length; i++){
+			sommeX += entrees.get(e[i]);
+		}
+		moyenneX = sommeX / e.length;
+		return moyenneX - this.aCoeffDirect();
+	}
+	
+	// En entrée série originale, retourne la série résiduelle
+	public Serie residus(int ordre){
+		Serie serie;
+		Serie serieDesais = this.desaisonnalise(ordre);
+		Integer[] e = serieDesais.entrees.keySet().toArray(new Integer[entrees.size()]);
+		double a = this.aCoeffDirect();
+		double b = this.bOrdonneOrigine();
+		double total = 0;
+		HashMap<Integer, Double> hm = new HashMap<>();
+		for(int i = 0; i < e.length; i++){
+			total = e[i] - (a * (i+1) - b);
+			hm.put(e[i],total);
+		}
+		serie = new Serie(this.nomSerie + "_residus" + ordre,this,hm);
+		return serie;		
+	}
 	
 	public String getNom(){ return nomSerie; }
 	public void setNom(String nom){ nomSerie = nom; }
