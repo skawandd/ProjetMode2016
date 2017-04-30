@@ -1,0 +1,4 @@
+- Développement de l'interface graphique principale (VueGraphique).
+- Développement de l'arborescence des séries (système de parent/enfant), du menu de contrôle, de l'ajout des séries au graph et à la liste ... (VueGraphique et TreeItemWithNode).
+- Développement de l'interface de transformation (VueTransformation) permettant de faire appel aux différentes méthodes du modèle Série.
+- Vidéo de présentation
