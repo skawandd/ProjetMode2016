@@ -1,0 +1,8 @@
+Contribution:
+
+--> Complétés
+- Nouvelles fonctionnalités sur graphCSV
+- IHM graphCSV
+
+--> Implémentation non complète
+- Avancement IHM jalon 3 (non-commit)
