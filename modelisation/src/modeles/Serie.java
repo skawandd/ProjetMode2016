@@ -304,12 +304,44 @@ public class Serie extends Observable{
 	}
 	
 	//En entrée série originale (sans transformations)
-	/*
 	public Serie desaisonnalise(int ordre){
-		
+		Serie serie;
+		Serie serieSais = this.saisonnalite(ordre);
+		Serie serieCoeff = serieSais.coeffSais(ordre);		
+		Serie serieCoeffNorm = serieCoeff.coeffSaisNorm(ordre);
+		Integer[] e = this.entrees.keySet().toArray(new Integer[entrees.size()]);
+		int nbIterations = entrees.size()/ordre;
+		double total;
+		Integer[] eC = serieCoeffNorm.entrees.keySet().toArray(new Integer[entrees.size()]);
+		HashMap<Integer, Double> hm = new HashMap<>();
+		for(int i = 0; i < ordre ; ++i){
+			total = 0;
+			for(int j = 0; j < nbIterations; j++){
+				total = e[i + j*ordre] - eC[i];
+				hm.put(i+j*ordre,total);
+			}
+		}
+		serie = new Serie(this.nomSerie + "_desais" + ordre,this,hm);
+		return serie;
 	}
 	
-	*/
+	// Calcul la variance de temps d'un échantillon
+	public double variance(){
+		Integer[] e = this.entrees.keySet().toArray(new Integer[entrees.size()]);
+		double var =0;
+		double somme = 0;
+		double moyenne = 0;
+		for(int i = 0; i < e.length; i++){
+			somme += i+1;
+		}
+		moyenne = somme / e.length;
+		for (int i = 0; i < e.length; i++){
+			var += ((i+1-moyenne)*(i+1-moyenne));
+		}
+		return var / e.length;
+	}
+	
+	
 	
 	public String getNom(){ return nomSerie; }
 	public void setNom(String nom){ nomSerie = nom; }
