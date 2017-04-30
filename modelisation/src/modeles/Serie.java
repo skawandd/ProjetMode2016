@@ -253,34 +253,50 @@ public class Serie extends Observable{
 	// En entrée série originale (sans transformations)
 	public Serie saisonnalite(int ordre){
 		Serie serie;
-		Serie serieMM = this.transformationMoyMobilePonderee(ordre);
+		Serie serieMM = this.transformationMoyMobile(ordre);
 		Integer[] e = this.entrees.keySet().toArray(new Integer[entrees.size()]);
 		Integer[] eM = serieMM.entrees.keySet().toArray(new Integer[entrees.size()]);
 		HashMap<Integer, Double> hm = new HashMap<>();
-		for(int i = ordre/2  ; i < this.entrees.size() - ordre/2; i++){
-			hm.put(i,(double)( e[i]-eM[i-ordre/2]));
+		for(int i = 0  ; i < serieMM.entrees.size(); i++){
+			hm.put(i + (ordre/2)+1, this.entrees.get(e[i + (ordre/2)])-serieMM.entrees.get(eM[i]));
 		}
-		serie = new Serie(this.nomSerie + "_Saison" + ordre,this,hm);		
+		serie = new Serie(this.nomSerie + "_Saison" + ordre,this,hm);	
+		childrens.add(serie);
+		this.setChanged();
+		this.notifyObservers(serie);
 		return serie;
 	}
 	
-	//En entrée série saisonnalite
+	//Uniquement avec ordre % nb entrees == 0
 	public Serie coeffSais(int ordre){
-		if(entrees.size() % ordre != 0) return null;
-		int nbIterations = entrees.size()/ordre;
 		Serie serie;
+		Serie sais = this.saisonnalite(ordre);
+		int nbIterations = sais.entrees.size()/ordre;
+		if(sais.entrees.size() % ordre != 0) return null;
+		double[] tab = new double[ordre];
+		int  cpt = 0;
 		double total;
-		Integer[] e = this.entrees.keySet().toArray(new Integer[entrees.size()]);
+		Integer[] e = sais.entrees.keySet().toArray(new Integer[entrees.size()]);
 		HashMap<Integer, Double> hm = new HashMap<>();
 		for(int i = 0; i < ordre ; ++i){
 			total = 0;
-			for(int j = 0; j < nbIterations; j++){
-				total += e[i + j*ordre];
+			for(int j = 0; j < (nbIterations) * ordre; j+=ordre){
+				total += sais.entrees.get(e[i + j]);
 			}
 			total /= nbIterations;
-			hm.put(i,total);
+			if(e[i]<tab.length+1)
+				tab[e[i]-1] = total;
+			else{
+				tab[cpt] = total;
+				cpt++;
+			}
 		}
+		for(int i= 0 ; i< tab.length; i++)
+			hm.put(i+1,tab[i]);
 		serie = new Serie(this.nomSerie + "_coeffSais" + ordre,this,hm);
+		childrens.add(serie);
+		this.setChanged();
+		this.notifyObservers(serie);
 		return serie;
 	}
 	
