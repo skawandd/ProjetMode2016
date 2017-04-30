@@ -26,11 +26,13 @@ import vues.VueIhm;
 public class CSVDecoder implements Observer{
 	
 	private File file;
+	private String file_name;
 	int choix;
 	ObservableList<String> items = FXCollections.observableArrayList ();
 	
 	public CSVDecoder(File file){
 		this.file = file;
+		this.file_name = file.getName();
 	}
 	
 	/**
@@ -162,6 +164,10 @@ public class CSVDecoder implements Observer{
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public String getName(){
+		return this.file_name;
 	}
 	
 }

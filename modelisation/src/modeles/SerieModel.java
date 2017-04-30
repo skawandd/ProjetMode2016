@@ -21,8 +21,8 @@ public class SerieModel extends Observable implements Observer{
 	 * @param f
 	 */
 
-	public void addSerieFromFile(File f, int choixAbs, int choixOrd){
-		Serie s = new Serie(f,choixAbs, choixOrd);
+	public void addSerieFromFile(File f, int choixAbs, int choixOrd, String name){
+		Serie s = new Serie(f,choixAbs, choixOrd, name);
 		for(Serie s2 : series){
 			if(s2.getNom() == s.getNom()) return;
 		}
