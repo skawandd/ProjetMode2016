@@ -127,7 +127,6 @@ public class Serie extends Observable{
 		Serie serie = new Serie(this.nomSerie+"_log", this, h);
 		childrens.add(serie);
 		this.setChanged();
-		this.notifyObservers(serie);
 		return serie;
 	}
 	
@@ -150,7 +149,6 @@ public class Serie extends Observable{
 		}
 		childrens.add(serie);
 		this.setChanged();
-		this.notifyObservers(serie);
 		return serie;
 	}
 	
@@ -180,7 +178,6 @@ public class Serie extends Observable{
 		Serie serie = new Serie(this.nomSerie+"_logistique", this, h);
 		childrens.add(serie);
 		this.setChanged();
-		this.notifyObservers(serie);
 		return serie;
 	}			
 			
@@ -231,7 +228,6 @@ public class Serie extends Observable{
 		else serie = new Serie(this.nomSerie+"_LissMoyMobPond"+ordre, this, hm);
 		childrens.add(serie);
 		this.setChanged();
-		this.notifyObservers(serie);
 		return serie;
 	}
 	
@@ -266,7 +262,6 @@ public class Serie extends Observable{
 		serie = new Serie(this.nomSerie + "_Saison" + ordre,this,hm);	
 		childrens.add(serie);
 		this.setChanged();
-		this.notifyObservers(serie);
 		return serie;
 	}
 	
@@ -299,7 +294,6 @@ public class Serie extends Observable{
 		serie = new Serie(this.nomSerie + "_coeffSais" + ordre,this,hm);
 		childrens.add(serie);
 		this.setChanged();
-		this.notifyObservers(serie);
 		return serie;
 	}
 	

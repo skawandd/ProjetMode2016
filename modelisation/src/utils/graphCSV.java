@@ -30,14 +30,14 @@ ObservableList<String> items = FXCollections.observableArrayList ();
 		
 		
 	VBox main = new VBox();	
-	Label titre_label = new Label("Nom de la série:");
+	Label titre_label = new Label("Nom de la sÃ©rie:");
 	TextField titre_textfield = new TextField(""+csv.getName());
 	HBox titre_hbox = new HBox(20);
 	titre_hbox.getChildren().addAll(titre_label, titre_textfield);
 	titre_hbox.setPadding(new Insets(30, 40, 0, 40));
 	
 	HBox abscisse_hbox = new HBox(20);
-	Label abscisse_label = new Label("Unité:");
+	Label abscisse_label = new Label("UnitÃ©:");
 	ComboBox<String> abscisse_combo = new ComboBox<>();
 	abscisse_combo.setItems(items);
 	abscisse_combo.getSelectionModel().select(0);
@@ -49,12 +49,12 @@ ObservableList<String> items = FXCollections.observableArrayList ();
     abscisse.setPadding(new Insets(30, 20, 30, 20));
     
     HBox ordonnee_hbox = new HBox(20);
-	Label ordonnee_label = new Label("Unité:");
+	Label ordonnee_label = new Label("UnitÃ©:");
 	ComboBox<String> ordonnee_combo = new ComboBox<>();
 	ordonnee_combo.setItems(items);
 	ordonnee_combo.getSelectionModel().select(5);
 	ordonnee_hbox.getChildren().addAll(ordonnee_label, ordonnee_combo);
-	TitledPane ordonnee = new TitledPane("Choix de l'ordonnée", ordonnee_hbox);
+	TitledPane ordonnee = new TitledPane("Choix de l'ordonnÃ©e", ordonnee_hbox);
 	ordonnee.setCollapsible(false);
     ordonnee.setAnimated(false);
     ordonnee.setMaxSize(400, 100);
