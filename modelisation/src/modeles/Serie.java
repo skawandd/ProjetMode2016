@@ -38,6 +38,7 @@ public class Serie extends Observable{
 		childrens = new ArrayList<>();
 	}
 	
+	
 	/**
 	 * Charge une serie a partir de donnees
 	 * @param nomSerie Le nom de la serie

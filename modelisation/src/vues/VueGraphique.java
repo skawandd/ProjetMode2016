@@ -37,9 +37,11 @@ public class VueGraphique implements Observer{
  
 	Tab tab;
 	LineChart<Number, Number> lineChart;
+	LineChart<Number, Number> lineChartMin;
 	TreeView<String> treeView;
 	BothWayHashMap<SerieGraph, TreeItem<String>> sgToTi;
 	BothWayHashMap<SerieGraph, XYChart.Series<Number, Number>> chart;
+	BothWayHashMap<SerieGraph, XYChart.Series<Number, Number>> chartMin;
 	GraphModel gm;
 	ObservableList<Serie> ol;
 	
@@ -53,6 +55,7 @@ public class VueGraphique implements Observer{
 		this.tab = tab;
 		this.gm = gm;
 		chart = new BothWayHashMap<>();
+		chartMin = new BothWayHashMap<>();
 		sgToTi = new BothWayHashMap<>();
 	}
 	
@@ -62,12 +65,23 @@ public class VueGraphique implements Observer{
 	public void init(){
         final NumberAxis xAxis = new NumberAxis();
         final NumberAxis yAxis = new NumberAxis();
+        final NumberAxis xAxisMin = new NumberAxis();
+        final NumberAxis yAxisMin = new NumberAxis();
         yAxis.setForceZeroInRange(false);
         xAxis.setLabel("Temps");
         lineChart = new LineChart<Number,Number>(xAxis,yAxis);
+        lineChartMin = new LineChart<Number,Number>(xAxisMin,yAxisMin);
         lineChart.setTitle("Series");
         lineChart.setCreateSymbols(false);
         lineChart.setLegendVisible(false);
+        lineChartMin.setCreateSymbols(false);
+        lineChartMin.setLegendVisible(false);
+        lineChartMin.getYAxis().setTickLabelsVisible(false);
+        lineChartMin.getYAxis().setOpacity(0);
+        lineChartMin.getXAxis().setTickLabelsVisible(false);
+        lineChartMin.getXAxis().setOpacity(0);
+        lineChartMin.setMaxHeight(100);
+        lineChartMin.setPadding(new Insets(0,0,0,22));
         ComboBox<String> cb = new ComboBox<String>();
         cb.setEditable(true);
         cb.setPromptText("serie ...");
@@ -153,10 +167,14 @@ public class VueGraphique implements Observer{
 	    	}
 	    });
         HBox hbox = new HBox();
+        HBox hbox2 = new HBox();
+        hbox2.getChildren().add(lineChartMin);
         VBox vbox = new VBox();
+        VBox vbox2 = new VBox();
+        vbox2.getChildren().addAll(lineChart, hbox2);
         vbox.getChildren().addAll(cb, treeView);
         VBox.setMargin(cb, new Insets(10,0,0,0));
-		hbox.getChildren().addAll(vbox, lineChart);
+		hbox.getChildren().addAll(vbox, vbox2);
 		tab.setContent(hbox);
 	}
 	
@@ -177,14 +195,19 @@ public class VueGraphique implements Observer{
 	 */
 	public void addCourbe(SerieGraph sg){
 		Series<Number, Number> series = new XYChart.Series<Number, Number>();
+		Series<Number, Number> seriesMin = new XYChart.Series<Number, Number>();
 		series.setName(sg.getSerie().getNom());
+		seriesMin.setName(sg.getSerie().getNom());
 		Serie s = sg.getSerie();
 	    HashMap<Integer, Double> data = s.getSerie();
 		for(Integer j : data.keySet()){
 			series.getData().add(new XYChart.Data<Number, Number>(j, data.get(j)));
+			seriesMin.getData().add(new XYChart.Data<Number, Number>(j, data.get(j)));
 		}
 	    lineChart.getData().add(series);
+	    lineChartMin.getData().add(seriesMin);
 	    chart.put(sg, series);
+	    chartMin.put(sg, seriesMin);//ATT
 	    setMouseEvents(series);
 	    editStyle(sg);
 	    updateSerieListe();
@@ -254,8 +277,11 @@ public class VueGraphique implements Observer{
 	 */
 	public void removeCourbe(SerieGraph sg){
 		Series<Number, Number> series = (Series<Number, Number>) chart.get(sg);
+		Series<Number, Number> seriesMin = (Series<Number, Number>) chartMin.get(sg);
 		lineChart.getData().remove(series);
+		lineChartMin.getData().remove(seriesMin);
 		chart.remove(sg);
+		chartMin.remove(sg);
 		updateSerieListe();
 	}
 	
@@ -265,12 +291,15 @@ public class VueGraphique implements Observer{
 	 */
 	public void editVisibilite(SerieGraph sg){
 		Series<Number, Number> series = (Series<Number, Number>) chart.get(sg);
+		Series<Number, Number> seriesMin = (Series<Number, Number>) chartMin.get(sg);
 		if(sg.isVisible()){
 			lineChart.getData().add(series);
+			lineChartMin.getData().add(seriesMin);
 			setMouseEvents(series);
 			editStyle(sg);
 		}else{
 			lineChart.getData().remove(series);
+			lineChartMin.getData().remove(seriesMin);
 			TreeItem<String> ti = (TreeItem<String>)sgToTi.get(sg);
 		}
 	}
