@@ -1,6 +1,8 @@
 package vues;
 
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -8,6 +10,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -83,7 +86,8 @@ public class VueTransformation {
 		modulaire.getChildren().setAll(resume, isPossible);
 		st.setHeight(200);
 		valider.setOnAction( (e)->{
-			s.transformationLogarithmique();
+			Serie res = s.transformationLogarithmique();
+			if(res != null) s.notifyObservers(res);
 			st.close();
 		});
 	}
@@ -111,7 +115,8 @@ public class VueTransformation {
 				valider.setDisable(true);
 		});
 		valider.setOnAction( (e)->{
-			s.transformationBoxCox(Double.parseDouble(ntf.getText()));
+			Serie res = s.transformationBoxCox(Double.parseDouble(ntf.getText()));
+			if(res != null) s.notifyObservers(res);
 			st.close();
 		});
 	}
@@ -131,7 +136,8 @@ public class VueTransformation {
 		VBox.setMargin(isPossible, new Insets(10, 10, 10, 10));
 		st.setHeight(230);
 		valider.setOnAction((e) ->{
-			s.transformationLogistique();
+			Serie res = s.transformationLogistique();
+			if(res != null) s.notifyObservers(res);
 			st.close();
 		});
 	}
@@ -149,7 +155,7 @@ public class VueTransformation {
 		hb.setAlignment(Pos.CENTER);
 		hb.getChildren().addAll(ordre, ntf);
 		modulaire.getChildren().setAll(resume, hb);
-		st.setHeight(180);
+		st.setHeight(200);
 		valider.setDisable(true);
 		ntf.textProperty().addListener((observable, oldValue, newValue) ->{
 			if(ntf.getText().length() > 0)
@@ -158,13 +164,39 @@ public class VueTransformation {
 				valider.setDisable(true);
 		});
 		valider.setOnAction((e)->{
-			s.transformationMoyMobile(Integer.parseInt(ntf.getText()));
+			Serie res = s.transformationMoyMobile(Integer.parseInt(ntf.getText()));
+			if(res != null) s.notifyObservers(res);
 			st.close();
 		});
 	}
 	
 	public void afficherMoyMobilePonderee(){
-		
+		Label resume = new Label("La moyenne mobile ponderee permet d'estimer la tendance et la saisonnalite en specifiant les ponderations");
+		resume.setFont(new Font(12.0));
+		resume.setWrapText(true);
+		VBox.setMargin(resume, new Insets(10,10,10,10));
+		Label ordre = new Label("Ordre :");
+		ordre.setFont(new Font(20.0));
+		NumberTextField ntf = new NumberTextField();
+		ntf.setMaxWidth(100.0);
+		VBox vordre = new VBox();
+		VBox ponderation = new VBox();
+		vordre.getChildren().addAll(ordre, ntf);
+		VBox.setMargin(vordre, new Insets(20,20,20,20));
+		HBox hb = new HBox();
+		Separator separator = new Separator(Orientation.VERTICAL);
+		/*HBox.setHgrow(vordre, Priority.ALWAYS);
+		HBox.setHgrow(ponderation, Priority.ALWAYS);
+		HBox.setHgrow(separator, Priority.NEVER);
+		separator.setHalignment(HPos.CENTER);*/
+		hb.getChildren().addAll(vordre, separator, ponderation);
+		modulaire.getChildren().setAll(resume, hb);
+		ntf.textProperty().addListener((observable, oldValue, newValue) -> {
+			if(ntf.getText().length() > 0){
+				
+			}
+		});
+		st.setHeight(250);
 	}
 	
 	
