@@ -13,10 +13,12 @@ import java.util.Scanner;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
+import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import modeles.Serie;
 import vues.VueIhm;
 /**
  * 
@@ -134,6 +136,9 @@ public class CSVDecoder implements Observer{
 		}
 }
 
+	
+	
+	
 	/**
 	 * 
 	 * @param colonne

@@ -99,6 +99,15 @@ public class VueGraphique implements Observer{
 	    });
 	    MenuItem analyse = new MenuItem("Analyse");
 	    MenuItem exporter = new MenuItem("Exporter");
+	    exporter.setOnAction((e)->{
+	    	TreeItem<String> ti = treeView.getSelectionModel().getSelectedItem();
+			SerieGraph sg = (SerieGraph)(sgToTi.getByValue(ti));
+	    	Serie s=sg.getSerie();
+	    	Stage stage = new Stage();
+    		stage.initModality(Modality.APPLICATION_MODAL);
+    		new VueExport(stage,s);
+	    	
+	    });
 	    MenuItem propriete = new MenuItem("Propriete");
 	    propriete.setOnAction( (e) ->{
     		TreeItem<String> ti = treeView.getSelectionModel().getSelectedItem();
