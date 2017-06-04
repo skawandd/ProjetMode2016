@@ -36,6 +36,10 @@ public class SerieModel extends Observable implements Observer{
 		series.add(s);
 	}
 	
+	public void removeSerie(Serie s){
+		series.remove(s);
+	}
+	
 	/**
 	 * Charge une serie a partir d'un serveur web
 	 * @param url

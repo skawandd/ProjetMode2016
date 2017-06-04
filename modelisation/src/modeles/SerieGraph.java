@@ -44,6 +44,13 @@ public class SerieGraph extends Observable{
 		this.release(new Updater("style", this));
 	}
 	
+	public String getNameWithOutTypes(){
+		if(name.contains("(") && name.contains(")")){
+			return name.substring(0, name.indexOf("("));
+		}
+		return name;
+	}
+	
 	public void setSameName(boolean value){ sameName = value; }
 	public Serie getSerie(){ return serie; }
 	public boolean isVisible(){ return visible; }
