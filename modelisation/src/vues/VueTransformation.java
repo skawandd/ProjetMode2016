@@ -1,5 +1,14 @@
 package vues;
 
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
+
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -15,49 +24,53 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import modeles.Serie;
+import modeles.Transformation;
+import modeles.Updater;
 
-public class VueTransformation {
+public class VueTransformation implements Observer{
 
 	Stage st;
 	Serie s;
 	VBox modulaire;
 	Button valider;
 	
-	VueTransformation(Stage st, Serie s){
+	VueTransformation(Stage st, Serie s) throws Exception{
+		ArrayList<Transformation> transf = new ArrayList<>();
+		ArrayList<VueTransfo> vueTransf = new ArrayList<>();
 		this.st = st;
 		this.s = s;
 		VBox total = new VBox();
 		modulaire = new VBox();
+		valider = new Button("Valider");
 		ComboBox<String> cb = new ComboBox<>();
-		cb.getItems().addAll("Transformation logarithmique",
-							 "Transformation de BoxCox",
-							 "Transformation logistique",
-							 "Transformation moyenne mobile",
-							 "Transformation moyenne mobile pondérée");
+		File folder = new File("bin/plugins/modeles");
+		File[] listOfFile = folder.listFiles();
+		URL url = new File("bin/plugins").toURI().toURL();
+		URL[] urls = new URL[]{url};
+		ClassLoader cl = new URLClassLoader(urls);
+		for(File f : listOfFile){
+			String className = "plugins.modeles."+f.getName().replaceAll(".class", "");
+			String className2 = "plugins.vues."+f.getName().replaceAll(".class", "");
+			Class<?> cls = cl.loadClass(className);
+			Class<?> cls2 = cl.loadClass(className2);
+			Transformation t = (Transformation) cls.newInstance();
+			t.setParams(s);
+			VueTransfo vt = (VueTransfo) cls2.newInstance();
+			vt.setParams(modulaire, valider, t, s, st);
+			vt.addObserver(this);
+			cb.getItems().add(t.getNom());
+			transf.add(t);
+			vueTransf.add(vt);
+		}
+		
 		cb.valueProperty().addListener((e) -> {
 			int item = cb.getSelectionModel().getSelectedIndex();
 			valider.setDisable(false);
-			switch(item){
-				case 0:
-					afficherLogarithmique();
-					break;
-				case 1:
-					afficherBoxCox();
-					break;
-				case 2:
-					afficherLogistique();
-					break;
-				case 3:
-					afficherMoyMobile();
-					break;
-				case 4:
-					afficherMoyMobilePonderee();
-					break;
-			}
+			vueTransf.get(item).presenterTransformation();
 		});
+		
 		cb.setMaxWidth(Double.MAX_VALUE);
 		VBox.setMargin(cb, new Insets(10,10,10,10));
-		valider = new Button("Valider");
 		valider.setPadding(new Insets(5, 50, 5, 50));
 		HBox hb = new HBox();
 		hb.getChildren().add(valider);
@@ -70,133 +83,15 @@ public class VueTransformation {
 		st.setScene(sc);
 		st.show();
 	}
-	
-	public void afficherLogarithmique(){
-		Label resume = new Label("La transformation logarithmique stabilise la variance des données selon la formule Y(t) = log(Xt)");
-		resume.setFont(new Font(12.0));
-		resume.setWrapText(true);
-		VBox.setMargin(resume, new Insets(10,10,10,10));
-		Label isPossible = new Label("La transformation est possible");
-		if(!s.checkLogarithmique()){
-			isPossible.setText("La transformation est impossible, certaines entrées sont inférieures ou égales a 0");
-			valider.setDisable(true);
+
+	@Override
+	public void update(Observable arg0, Object arg1) {
+		
+		Updater up = (Updater)arg1;
+		if(up.getDescriptif().equals("exit")){
+			st.close();
 		}
-		VBox.setMargin(isPossible, new Insets(10, 10, 10, 10));
-		isPossible.setWrapText(true);
-		modulaire.getChildren().setAll(resume, isPossible);
-		st.setHeight(200);
-		valider.setOnAction( (e)->{
-			Serie res = s.transformationLogarithmique();
-			if(res != null) s.notifyObservers(res);
-			st.close();
-		});
-	}
-	
-	public void afficherBoxCox(){
-		Label resume = new Label("La transformation de BoxCox stabilise la variance des données selon la formule Yt = (Xt^λ-1)/λ si λ > 0 ou log(Xt) si λ = 0");
-		Label lambda = new Label("λ : ");
-		resume.setFont(new Font(12.0));
-		resume.setWrapText(true);
-		VBox.setMargin(resume, new Insets(10,10,10,10));
-		lambda.setFont(new Font(30.0));
-		NumberTextField ntf = new NumberTextField();
-		ntf.setDot(true);
-		ntf.setMaxWidth(100.0);
-		HBox hb = new HBox();
-		hb.setAlignment(Pos.CENTER);
-		hb.getChildren().addAll(lambda, ntf);
-		modulaire.getChildren().setAll(resume, hb);
-		st.setHeight(220);
-		valider.setDisable(true);
-		ntf.textProperty().addListener((observable, oldValue, newValue) ->{
-			if(ntf.getText().length() > 0 && newValue.charAt(newValue.length()-1) != '.')
-				valider.setDisable(false);
-			else
-				valider.setDisable(true);
-		});
-		valider.setOnAction( (e)->{
-			Serie res = s.transformationBoxCox(Double.parseDouble(ntf.getText()));
-			if(res != null) s.notifyObservers(res);
-			st.close();
-		});
-	}
-	
-	public void afficherLogistique(){
-		Label resume = new Label("La transformation logistique stabilise la variance des données dans l'intervalle ]0,1[ selon la formule Yt = log(Xt/(1-Xt))");
-		resume.setFont(new Font(12.0));
-		resume.setWrapText(true);
-		Label isPossible = new Label("La transformation logistique est possible");
-		if(!s.checkLogistique()){
-			isPossible.setText("La transformation est impossible car certaines valeurs ne sont pas compris dans l'intervalle ]0,1[");
-			valider.setDisable(true);
-		}
-		isPossible.setWrapText(true);
-		modulaire.getChildren().setAll(resume, isPossible);
-		VBox.setMargin(resume, new Insets(10,10,10,10));
-		VBox.setMargin(isPossible, new Insets(10, 10, 10, 10));
-		st.setHeight(230);
-		valider.setOnAction((e) ->{
-			Serie res = s.transformationLogistique();
-			if(res != null) s.notifyObservers(res);
-			st.close();
-		});
-	}
-	
-	public void afficherMoyMobile(){
-		Label resume = new Label("La moyenne mobile permet d'estimer la tendance et la saisonnalité");
-		resume.setFont(new Font(12.0));
-		resume.setWrapText(true);
-		VBox.setMargin(resume, new Insets(10,10,10,10));
-		Label ordre = new Label("Ordre : ");
-		ordre.setFont(new Font(25.0));
-		NumberTextField ntf = new NumberTextField();
-		ntf.setMaxWidth(100.0);
-		HBox hb = new HBox();
-		hb.setAlignment(Pos.CENTER);
-		hb.getChildren().addAll(ordre, ntf);
-		modulaire.getChildren().setAll(resume, hb);
-		st.setHeight(200);
-		valider.setDisable(true);
-		ntf.textProperty().addListener((observable, oldValue, newValue) ->{
-			if(ntf.getText().length() > 0)
-				valider.setDisable(false);
-			else
-				valider.setDisable(true);
-		});
-		valider.setOnAction((e)->{
-			Serie res = s.transformationMoyMobile(Integer.parseInt(ntf.getText()));
-			if(res != null) s.notifyObservers(res);
-			st.close();
-		});
-	}
-	
-	public void afficherMoyMobilePonderee(){
-		Label resume = new Label("La moyenne mobile ponderee permet d'estimer la tendance et la saisonnalite en specifiant les ponderations");
-		resume.setFont(new Font(12.0));
-		resume.setWrapText(true);
-		VBox.setMargin(resume, new Insets(10,10,10,10));
-		Label ordre = new Label("Ordre :");
-		ordre.setFont(new Font(20.0));
-		NumberTextField ntf = new NumberTextField();
-		ntf.setMaxWidth(100.0);
-		VBox vordre = new VBox();
-		VBox ponderation = new VBox();
-		vordre.getChildren().addAll(ordre, ntf);
-		VBox.setMargin(vordre, new Insets(20,20,20,20));
-		HBox hb = new HBox();
-		Separator separator = new Separator(Orientation.VERTICAL);
-		/*HBox.setHgrow(vordre, Priority.ALWAYS);
-		HBox.setHgrow(ponderation, Priority.ALWAYS);
-		HBox.setHgrow(separator, Priority.NEVER);
-		separator.setHalignment(HPos.CENTER);*/
-		hb.getChildren().addAll(vordre, separator, ponderation);
-		modulaire.getChildren().setAll(resume, hb);
-		ntf.textProperty().addListener((observable, oldValue, newValue) -> {
-			if(ntf.getText().length() > 0){
-				
-			}
-		});
-		st.setHeight(250);
+		
 	}
 	
 	

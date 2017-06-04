@@ -48,6 +48,7 @@ public class Serie extends Observable{
 	public Serie(String nomSerie, Serie parent, HashMap<Integer, Double> h){
 		this.nomSerie = nomSerie;
 		this.parent = parent;
+		parent.getChildrens().add(this);
 		this.entrees = h;
 		childrens = new ArrayList<>();
 	}
@@ -105,81 +106,9 @@ public class Serie extends Observable{
 		return false;
 	}
 	
-	/**
-	 * Verifie que la transformation logarithmique est realisable
-	 * @return true si elle est possible, false sinon
-	 */
-	public boolean checkLogarithmique(){
-		for(Integer j : entrees.keySet())
-			if(entrees.get(j) <= 0) return false;
-		return true;
-	}
-	
-	/**
-	 * Effectue la transformation logarithmique
-	 * @return La serie resultat ou null en cas d'erreur
-	 */
-	public Serie transformationLogarithmique(){
-		HashMap<Integer, Double> h = new HashMap<>();
-		if(!checkLogarithmique()) return null;
-		for(Integer j : entrees.keySet())
-			h.put(j, Math.log(entrees.get(j)));
-		Serie serie = new Serie(this.nomSerie+"_log", this, h);
-		childrens.add(serie);
+	public void callChanged(){
 		this.setChanged();
-		return serie;
 	}
-	
-	/**
-	 * Effectue la transformation de BoxCox
-	 * @param lambda 
-	 * @return La serie resultat ou null en cas d'erreur
-	 */
-	public Serie transformationBoxCox(Double lambda){
-		Serie serie;
-		if(lambda == 0){
-			serie = this.transformationLogarithmique();
-			if(serie == null) return null;
-			serie.nomSerie = serie.nomSerie+"_BoxCox";
-		}else{
-			HashMap<Integer, Double> h = new HashMap<>();
-			for(Integer j : entrees.keySet())
-				h.put(j,((Math.pow(entrees.get(j), lambda))-1)/lambda);
-			serie = new Serie(this.nomSerie+"_BoxCox", this, h);
-		}
-		childrens.add(serie);
-		this.setChanged();
-		return serie;
-	}
-	
-	/**
-	 * Verifie si une transformation logistique est possible
-	 * @return true si elle est possible, false sinon
-	 */
-	public boolean checkLogistique(){
-		for(Integer j: entrees.keySet())
-			if(entrees.get(j) <= 0 || entrees.get(j) >= 1)
-				return false;
-		return true;
-	}
-	
-	/**
-	 * Effectue la transformation logistique
-	 * @return La serie resutlat ou null en cas d'erreur
-	 */
-	public Serie transformationLogistique(){
-		HashMap<Integer, Double> h = new HashMap<>();
-		Double t;
-		if(!checkLogistique()) return null;
-		for(Integer j: entrees.keySet()){
-			t = Math.log(entrees.get(j)/(1 - entrees.get(j)));
-			h.put(j, t);
-		}
-		Serie serie = new Serie(this.nomSerie+"_logistique", this, h);
-		childrens.add(serie);
-		this.setChanged();
-		return serie;
-	}			
 			
 	/**
 	 * La transformation moyenne mobile appel transformationMoyMobilePonderee avec des ponderations egales
@@ -226,8 +155,6 @@ public class Serie extends Observable{
 		Serie serie;
 		if(Arrays.stream(ponderation).distinct().count() == 1) serie = new Serie(this.nomSerie+"_LissMoyMob"+ordre, this, hm);
 		else serie = new Serie(this.nomSerie+"_LissMoyMobPond"+ordre, this, hm);
-		childrens.add(serie);
-		this.setChanged();
 		return serie;
 	}
 	
