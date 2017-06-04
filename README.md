@@ -29,7 +29,6 @@ Résumé des fonctionnalités implémentées/non implémentées :
 		- Quelques tests présent dans src > test > TestSerie.java ...
 		- MVC largement utilisé.
 
-
 Le système de plugins :
 
 Les plugins vous permettent de créer vos propres traitements.
