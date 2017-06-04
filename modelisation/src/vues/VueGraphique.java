@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
+
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -26,6 +27,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -48,63 +51,49 @@ public class VueGraphique implements Observer {
 	BothWayHashMap<SerieGraph, XYChart.Series<Number, Number>> chartMin;
 	GraphModel gm;
 	ObservableList<Serie> ol;
-	
 	NumberAxis xAxis;
 	NumberAxis yAxis;
-	
-
+	NumberAxis xAxisMin;
+	NumberAxis yAxisMin;
 	double mouse_x = 0.0;
 	double mouse_y = 0.0;
 	double rectangle_x1 = 10;
 	double rectangle_y1 = 14;
 	double rectangle_x2 = 460;
 	double rectangle_y2 = 14;
-	double height = 40;
-	double width = 40;
-	// boolean rectangle_selected = false;
 	int select = 0;
-	double sizeWidth = 0.0;
-	double sizeHeigth = 0.0;
+	
 
-	// checks whether the mouse location is within the circle or not
 	private void select(MouseEvent e) {
 		System.out.println("select");
 		double temp_mouse_x = e.getX();
 		double temp_mouse_y = e.getY();
-		double x_max = this.rectangle_x1 + this.width;
-		double y_max = this.rectangle_y1 + this.height;
-		boolean selected = temp_mouse_x >= this.rectangle_x1
-				|| temp_mouse_x >= this.rectangle_x2 && temp_mouse_x <= x_max// x-area
-						&& temp_mouse_y >= this.rectangle_y1
-				|| temp_mouse_y >= this.rectangle_y2 && temp_mouse_y <= y_max; // y-area
-		System.out.println("selected is " + selected + "X = " + temp_mouse_x + " Y = " + temp_mouse_y);
-
-		if (select > 0 && selected) {
-			// deselect the circle if already selected
+		boolean selected = (e.getX() > rectangle_x1 -5 && e.getX() < rectangle_x1 + 5);		
+		System.out.println("selected is " + selected + "X = " + temp_mouse_x + " Y = " + temp_mouse_y + "R1 = "+rectangle_x1 + "R2" + rectangle_x2);
+		
+		if (select > 0) {
+			System.out.println("deselect");
+			resizeRange();
 			select = 0;
-		} else if (e.getX() < rectangle_x2) {
+		} else if (e.getX() > rectangle_x1 -5 && e.getX() < rectangle_x1 + 5) {
 			select = 1;
-			xAxis.setAutoRanging(false);
-			xAxis.setLowerBound(5);
-			xAxis.setUpperBound(6);
-		} else {
+		} else if(e.getX() > rectangle_x2 -5 && e.getX() < rectangle_x2 + 5){
 			select = 2;
 		}
 		this.mouse_x = temp_mouse_x;
 		this.mouse_y = temp_mouse_y;
 	}
 
-	// move circle
 	public void move(MouseEvent e, Canvas canvas, int select) {
 		System.out.println("move");
 		double change_x = e.getX() - this.mouse_x;
-		if (select == 1 && e.getX() < rectangle_x2) {
+		if (select == 1 && e.getX() < rectangle_x2 && e.getX() >= 12) {
 			this.rectangle_x1 += change_x;
 			canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 			this.createRectangle1(canvas);
 			this.mouse_x = e.getX();
 			this.mouse_y = e.getY();
-		} else if (select == 2 && e.getX() > rectangle_x1) {
+		} else if (select == 2 && e.getX() > rectangle_x1 +5 && e.getX() >= 12) {
 			this.rectangle_x2 += change_x;
 			canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 			this.createRectangle2(canvas);
@@ -113,14 +102,26 @@ public class VueGraphique implements Observer {
 		}
 		System.out.println("mouseX:" + this.mouse_x + "mouseY:" + this.mouse_y);
 	}
+	
+	public void resizeRange(){
+		double lower = (xAxisMin.getUpperBound()/457)*rectangle_x1;
+		double upper = (xAxisMin.getUpperBound()/457)*rectangle_x2;
+		System.out.println("lower:"+lower + " upper:"+upper);
+		xAxis.setAutoRanging(false);
+		xAxis.setLowerBound(lower);
+		xAxis.setUpperBound(upper);
+		
+	}
 
 	public void createRectangle1(Canvas canvas) {
 		GraphicsContext gc = canvas.getGraphicsContext2D();
-
-		gc.fillRect(rectangle_x1, rectangle_y1, 5, 100);
+		 
 		if (select == 1) {
-			gc.fillRect(rectangle_x2, rectangle_y2, 5, 100);
+			gc.fillRect(rectangle_x2, rectangle_y2, 5, 110);
+			gc.setFill(Color.BLUE);
 		}
+		gc.fillRect(rectangle_x1, rectangle_y1, 5, 110);
+		gc.setFill(Color.RED);
 		gc.translate(0, 0);
 		gc.fill();
 		gc.stroke();
@@ -130,13 +131,26 @@ public class VueGraphique implements Observer {
 	public void createRectangle2(Canvas canvas) {
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		if (select == 2) {
-			gc.fillRect(rectangle_x1, rectangle_y1, 5, 100);
+			gc.fillRect(rectangle_x1, rectangle_y1, 5, 110);
+			gc.setFill(Color.RED);
 		}
-		gc.fillRect(rectangle_x2, rectangle_y2, 5, 100);
+		gc.fillRect(rectangle_x2, rectangle_y2, 5, 110);
+		gc.setFill(Color.BLUE);
 		gc.translate(0, 0);
 		gc.fill();
 		gc.stroke();
 
+	}
+	
+	public void initRectangles(Canvas canvas){
+		GraphicsContext gc = canvas.getGraphicsContext2D();
+		gc.fillRect(rectangle_x1, rectangle_y1, 5, 110);
+		gc.setFill(Color.RED);
+		gc.fillRect(rectangle_x2, rectangle_y2, 5, 110);
+		gc.setFill(Color.BLUE);
+		gc.translate(0, 0);
+		gc.fill();
+		gc.stroke();
 	}
 
 	/**
@@ -163,8 +177,8 @@ public class VueGraphique implements Observer {
 
 		xAxis = new NumberAxis();
 		yAxis = new NumberAxis();
-		final NumberAxis xAxisMin = new NumberAxis();
-		final NumberAxis yAxisMin = new NumberAxis();
+		xAxisMin = new NumberAxis();
+		yAxisMin = new NumberAxis();
 		yAxis.setForceZeroInRange(false);
 		xAxis.setLabel("Temps");
 		lineChart = new LineChart<Number, Number>(xAxis, yAxis);
@@ -179,19 +193,15 @@ public class VueGraphique implements Observer {
 		lineChartMin.getXAxis().setTickLabelsVisible(false);
 		lineChartMin.getXAxis().setOpacity(0);
 		lineChartMin.setMaxHeight(100);
-		// lineChartMin.setPadding(new Insets(0,0,0,22));
-
-		sizeWidth = lineChartMin.getWidth();
-		sizeHeigth = lineChartMin.getHeight();
-		System.out.println(sizeWidth + "\n" + sizeHeigth);
-		Canvas canvas = new Canvas(470, 100);
-
-		// GraphicsContext gc = canvas.getGraphicsContext2D();
-		// gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
-		this.createRectangle1(canvas);
-		this.createRectangle2(canvas);
-
+		Canvas canvas = new Canvas(470, 150);
+		GraphicsContext gc = canvas.getGraphicsContext2D();
+		gc.fillRect(rectangle_x1, rectangle_y1, 5, 110);
+		gc.setFill(Color.RED);
+		gc.fillRect(rectangle_x2, rectangle_y2, 5, 110);
+		gc.setFill(Color.BLUE);
+		gc.translate(0, 0);
+		gc.fill();
+		gc.stroke();
 		canvas.setOnMouseClicked(e -> this.select(e));
 		canvas.setOnMouseMoved(e -> {
 			if (this.select > 0)
@@ -298,8 +308,6 @@ public class VueGraphique implements Observer {
 		StackPane stack = new StackPane();
 		stack.getChildren().addAll(lineChartMin, canvas);
 		HBox hbox = new HBox();
-		// HBox hbox2 = new HBox();
-		// hbox2.getChildren().add(stack);
 		VBox vbox = new VBox();
 		VBox vbox2 = new VBox();
 		vbox2.getChildren().addAll(lineChart, stack);
