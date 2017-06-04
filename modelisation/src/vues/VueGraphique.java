@@ -61,100 +61,8 @@ public class VueGraphique implements Observer {
 	double mouse_x = 0.0;
 	double mouse_y = 0.0;
 	double rectangle_x1 = 10;
-	double rectangle_y1 = 14;
-	double rectangle_x2 = 460;
-	double rectangle_y2 = 14;
+	double rectangle_x2 = 467;
 	int select = 0;
-	
-
-	private void select(MouseEvent e) {
-		System.out.println("select");
-		double temp_mouse_x = e.getX();
-		double temp_mouse_y = e.getY();
-		boolean selected = (e.getX() > rectangle_x1 -5 && e.getX() < rectangle_x1 + 5);		
-		System.out.println("selected is " + selected + "X = " + temp_mouse_x + " Y = " + temp_mouse_y + "R1 = "+rectangle_x1 + "R2" + rectangle_x2);
-		
-		if (select > 0) {
-			System.out.println("deselect");
-			resizeRange();
-			select = 0;
-		} else if (e.getX() > rectangle_x1 -5 && e.getX() < rectangle_x1 + 5) {
-			select = 1;
-		} else if(e.getX() > rectangle_x2 -5 && e.getX() < rectangle_x2 + 5){
-			select = 2;
-		}
-		this.mouse_x = temp_mouse_x;
-		this.mouse_y = temp_mouse_y;
-	}
-
-	public void move(MouseEvent e, Canvas canvas, int select) {
-		System.out.println("move");
-		double change_x = e.getX() - this.mouse_x;
-		if (select == 1 && e.getX() < rectangle_x2 && e.getX() >= 12) {
-			this.rectangle_x1 += change_x;
-			canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-			this.createRectangle1(canvas);
-			this.mouse_x = e.getX();
-			this.mouse_y = e.getY();
-		} else if (select == 2 && e.getX() > rectangle_x1 +5 && e.getX() >= 12) {
-			this.rectangle_x2 += change_x;
-			canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-			this.createRectangle2(canvas);
-			this.mouse_x = e.getX();
-			this.mouse_y = e.getY();
-		}
-		System.out.println("mouseX:" + this.mouse_x + "mouseY:" + this.mouse_y);
-	}
-	
-	public void resizeRange(){
-		double lower = (xAxisMin.getUpperBound()/457)*rectangle_x1;
-		double upper = (xAxisMin.getUpperBound()/457)*rectangle_x2;
-		System.out.println("lower:"+lower + " upper:"+upper);
-		xAxis.setAutoRanging(false);
-		xAxis.setLowerBound(lower);
-		xAxis.setUpperBound(upper);
-		
-	}
-
-	public void createRectangle1(Canvas canvas) {
-		GraphicsContext gc = canvas.getGraphicsContext2D();
-		 
-		if (select == 1) {
-			gc.fillRect(rectangle_x2, rectangle_y2, 5, 110);
-			gc.setFill(Color.BLUE);
-		}
-		gc.fillRect(rectangle_x1, rectangle_y1, 5, 110);
-		gc.setFill(Color.RED);
-		gc.translate(0, 0);
-		gc.fill();
-		gc.stroke();
-
-	}
-
-	public void createRectangle2(Canvas canvas) {
-		GraphicsContext gc = canvas.getGraphicsContext2D();
-		if (select == 2) {
-			gc.fillRect(rectangle_x1, rectangle_y1, 5, 110);
-			gc.setFill(Color.RED);
-		}
-		gc.fillRect(rectangle_x2, rectangle_y2, 5, 110);
-		gc.setFill(Color.BLUE);
-		gc.translate(0, 0);
-		gc.fill();
-		gc.stroke();
-
-	}
-	
-	public void initRectangles(Canvas canvas){
-		GraphicsContext gc = canvas.getGraphicsContext2D();
-		gc.fillRect(rectangle_x1, rectangle_y1, 5, 110);
-		gc.setFill(Color.RED);
-		gc.fillRect(rectangle_x2, rectangle_y2, 5, 110);
-		gc.setFill(Color.BLUE);
-		gc.translate(0, 0);
-		gc.fill();
-		gc.stroke();
-	}
 
 	/**
 	 * Creer une nouvelle vue graphique
@@ -215,16 +123,10 @@ public class VueGraphique implements Observer {
 		cmTab.getItems().addAll(rename, export);
 		tab.setContextMenu(cmTab);
 		
-		Canvas canvas = new Canvas(470, 150);
-		GraphicsContext gc = canvas.getGraphicsContext2D();
-		gc.fillRect(rectangle_x1, rectangle_y1, 5, 110);
-		gc.setFill(Color.RED);
-		gc.fillRect(rectangle_x2, rectangle_y2, 5, 110);
-		gc.setFill(Color.BLUE);
-		gc.translate(0, 0);
-		gc.fill();
-		gc.stroke();
-
+		Canvas canvas = new Canvas(472, 150);
+		drawRectangle(canvas);
+		xAxis.setAutoRanging(false);
+		
 		canvas.setOnMouseClicked(e -> this.select(e));
 		canvas.setOnMouseMoved(e -> {
 			if (this.select > 0)
@@ -341,7 +243,6 @@ public class VueGraphique implements Observer {
 		VBox.setMargin(cb, new Insets(10, 0, 0, 0));
 		hbox.getChildren().addAll(vbox, vbox2);
 		tab.setContent(hbox);
-
 	}
 
 	/**
@@ -375,9 +276,12 @@ public class VueGraphique implements Observer {
 		lineChart.getData().add(series);
 		lineChartMin.getData().add(seriesMin);
 		chart.put(sg, series);
-		chartMin.put(sg, seriesMin);// ATT
+		chartMin.put(sg, seriesMin);
 		setMouseEvents(series);
 		editStyle(sg);
+		new java.util.Timer().schedule( new java.util.TimerTask() {
+			public void run() { resizeRange(); }}, 100
+		);
 		updateSerieListe();
 	}
 
@@ -477,10 +381,66 @@ public class VueGraphique implements Observer {
 
 	public void editStyle(SerieGraph sg) {
 		Node node = ((XYChart.Series<Number, Number>) chart.get(sg)).getNode();
+		Node nodeMin = ((XYChart.Series<Number, Number>) chartMin.get(sg)).getNode();
 		int[] rgb = sg.getRgb();
 		node.setStyle("-fx-stroke: rgb(" + rgb[0] + ", " + rgb[1] + ", " + rgb[2] + ");");
+		nodeMin.setStyle("-fx-stroke: rgb(" + rgb[0] + ", " + rgb[1] + ", " + rgb[2] + ");");
+	}
+	
+	private void select(MouseEvent e) {
+		double temp_mouse_x = e.getX();
+		double temp_mouse_y = e.getY();
+		boolean selected = (e.getX() > rectangle_x1 -5 && e.getX() < rectangle_x1 + 5);		
+
+		if (select > 0) select = 0;
+		else if (e.getX() >= rectangle_x1 -5 && e.getX() <= rectangle_x1 + 5) select = 1;
+		else if(e.getX() >= rectangle_x2 -5 && e.getX() <= rectangle_x2 + 5) select = 2;
+		else if(e.getX() > rectangle_x1+5 && e.getX() <= rectangle_x2-5) select = 3;
+		this.mouse_x = temp_mouse_x;
+		this.mouse_y = temp_mouse_y;
 	}
 
+	public void move(MouseEvent e, Canvas canvas, int select) {
+		double change_x = e.getX() - this.mouse_x;
+		if (select == 1 && e.getX() < rectangle_x2 && e.getX() >= 12) {
+			this.rectangle_x1 += change_x;
+			this.drawRectangle(canvas);
+			this.mouse_x = e.getX();
+			this.mouse_y = e.getY();
+		} else if (select == 2 && e.getX() > rectangle_x1 +5 && e.getX() >= 12) {
+			this.rectangle_x2 += change_x;
+			this.drawRectangle(canvas);
+			this.mouse_x = e.getX();
+			this.mouse_y = e.getY();
+		} else if(select == 3 && rectangle_x1+change_x > 5 && rectangle_x2+change_x < 467){
+			this.rectangle_x1 += change_x;
+			this.rectangle_x2 += change_x;
+			this.mouse_x = e.getX();
+			this.mouse_y = e.getY();
+			this.drawRectangle(canvas);
+		}
+		if(select > 0) resizeRange();
+	}
+	
+	public void resizeRange(){
+		double lower = (xAxisMin.getUpperBound()/467)*rectangle_x1;
+		double upper = (xAxisMin.getUpperBound()/467)*rectangle_x2;
+		xAxis.setLowerBound(lower);
+		xAxis.setUpperBound(upper);
+	}
+
+	public void drawRectangle(Canvas canvas) {
+		int rectangle_y = 14;
+		GraphicsContext gc = canvas.getGraphicsContext2D();
+		canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+		gc.setFill(Color.RED);
+		gc.fillRect(rectangle_x2, rectangle_y, 5, 110);
+		gc.setFill(Color.BLUE);
+		gc.fillRect(rectangle_x1, rectangle_y, 5, 110);
+		gc.setFill(Color.rgb(0, 50, 255, 0.2));
+		gc.fillRect(rectangle_x1+5, 14, rectangle_x2-rectangle_x1-5, 110);
+	}
+	
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		Updater u = (Updater) arg1;
