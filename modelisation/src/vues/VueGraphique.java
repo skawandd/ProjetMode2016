@@ -236,7 +236,12 @@ public class VueGraphique implements Observer {
 				return;
 			Stage stage = new Stage();
 			stage.initModality(Modality.APPLICATION_MODAL);
-			new VueTransformation(stage, ((SerieGraph) (sgToTi.getByValue(ti))).getSerie());
+			try {
+				new VueTransformation(stage, ((SerieGraph) (sgToTi.getByValue(ti))).getSerie());
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		});
 		MenuItem analyse = new MenuItem("Analyse");
 		MenuItem exporter = new MenuItem("Exporter");
