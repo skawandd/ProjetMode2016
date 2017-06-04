@@ -5,9 +5,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import modeles.Serie;
-import vues.VueTransfo;
+import vues.VueTraitement;
 
-public class Logistique extends VueTransfo{
+public class Logistique extends VueTraitement{
 
 	public void presenterTransformation() {
 		Label resume = new Label("La transformation logistique stabilise la variance des données dans l'intervalle ]0,1[ selon la formule Yt = log(Xt/(1-Xt))");
@@ -24,7 +24,7 @@ public class Logistique extends VueTransfo{
 		VBox.setMargin(isPossible, new Insets(10, 10, 10, 10));
 		st.setHeight(230);
 		valider.setOnAction((e) ->{
-			transformer(null);
+			traiter(null);
 		});
 	}
 

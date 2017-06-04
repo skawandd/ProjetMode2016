@@ -8,9 +8,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import vues.NumberTextField;
-import vues.VueTransfo;
+import vues.VueTraitement;
 
-public class MoyMobilePond extends VueTransfo{
+public class MoyMobilePond extends VueTraitement{
 
 	@Override
 	public void presenterTransformation() {

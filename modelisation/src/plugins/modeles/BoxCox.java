@@ -4,23 +4,23 @@ import java.util.HashMap;
 import java.util.List;
 
 import modeles.Serie;
-import modeles.Transformation;
+import modeles.Traitement;
 import plugins.modeles.Logarithmique;
 
-public class BoxCox extends Transformation{
+public class BoxCox extends Traitement{
 
 	/**
 	 * Effectue la transformation de BoxCox
 	 * @param lambda 
 	 * @return La serie resultat ou null en cas d'erreur
 	 */
-	public Serie transformer(List<Object> l) {
+	public Serie traiter(List<Object> l) {
 		Serie serie;
 		double lambda = (Double)l.get(0);
 		if(lambda == 0){
-			Transformation t = new Logarithmique();
+			Traitement t = new Logarithmique();
 			t.setParams(s);
-			serie = t.transformer(null);
+			serie = t.traiter(null);
 			if(serie == null) return null;
 			serie.setNom(s.getNom()+"_BoxCox");
 		}else{

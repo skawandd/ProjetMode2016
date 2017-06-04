@@ -86,7 +86,6 @@ public class CSVDecoder implements Observer{
 		try {
 			while((line = br.readLine()) != null){
 				elems = line.split(",");
-				System.out.println(elems[choixAbs]+" "+elems[choixOrd]);
 				CSV.put(Integer.parseInt(elems[choixAbs]), Double.parseDouble(elems[choixOrd]));
 			}
 		} catch (NumberFormatException e) {

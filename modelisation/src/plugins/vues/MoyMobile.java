@@ -10,9 +10,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import modeles.Serie;
 import vues.NumberTextField;
-import vues.VueTransfo;
+import vues.VueTraitement;
 
-public class MoyMobile extends VueTransfo{
+public class MoyMobile extends VueTraitement{
 
 	public void presenterTransformation() {
 		Label resume = new Label("La moyenne mobile permet d'estimer la tendance et la saisonnalité");
@@ -36,7 +36,7 @@ public class MoyMobile extends VueTransfo{
 				valider.setDisable(true);
 		});
 		valider.setOnAction((e)->{
-			transformer(Arrays.asList(Integer.parseInt(ntf.getText())));
+			traiter(Arrays.asList(Integer.parseInt(ntf.getText())));
 		});
 	}
 

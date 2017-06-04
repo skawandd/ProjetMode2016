@@ -4,9 +4,9 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import vues.VueTransfo;
+import vues.VueTraitement;
 
-public class Logarithmique extends VueTransfo{
+public class Logarithmique extends VueTraitement{
 	
 	public void presenterTransformation() {
 		Label resume = new Label("La transformation logarithmique stabilise la variance des données selon la formule Y(t) = log(Xt)");
@@ -23,7 +23,7 @@ public class Logarithmique extends VueTransfo{
 		vb.getChildren().setAll(resume, isPossible);
 		st.setHeight(200);
 		valider.setOnAction( (e)->{
-			transformer(null);
+			traiter(null);
 		});
 	}
 	

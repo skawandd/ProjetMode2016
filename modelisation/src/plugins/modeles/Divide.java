@@ -3,11 +3,11 @@ package plugins.modeles;
 import java.util.HashMap;
 import java.util.List;
 import modeles.Serie;
-import modeles.Transformation;
+import modeles.Traitement;
 
-public class Divide extends Transformation{
+public class Divide extends Traitement{
 	
-	public Serie transformer(List<Object> l) {
+	public Serie traiter(List<Object> l) {
 		// On recoit le parametre utilisateur, c-a-d le nombre par lequel il faut diviser
 		int diviseur = (Integer)l.get(0);
 		if(diviseur == 0) return null;

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Optional;
+
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -18,6 +20,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -48,7 +51,6 @@ public class VueGraphique implements Observer {
 	BothWayHashMap<SerieGraph, XYChart.Series<Number, Number>> chartMin;
 	GraphModel gm;
 	ObservableList<Serie> ol;
-	
 	NumberAxis xAxis;
 	NumberAxis yAxis;
 	
@@ -181,6 +183,23 @@ public class VueGraphique implements Observer {
 		lineChartMin.setMaxHeight(100);
 		// lineChartMin.setPadding(new Insets(0,0,0,22));
 
+		ContextMenu cmTab = new ContextMenu();
+		MenuItem rename = new MenuItem("Renommer");
+		rename.setOnAction((e)->{
+			TextInputDialog dialog = new TextInputDialog(tab.getText());
+			dialog.setTitle("Renommer");
+			Optional<String> result = dialog.showAndWait();
+			result.ifPresent(name -> tab.setText(name));
+		});
+		MenuItem export = new MenuItem("Exporter");
+		export.setOnAction((e)->{
+			Stage stage = new Stage();
+			stage.initModality(Modality.APPLICATION_MODAL);
+			new ExportPng().export(stage, lineChart, tab.getText());
+		});
+		cmTab.getItems().addAll(rename, export);
+		tab.setContextMenu(cmTab);
+		
 		sizeWidth = lineChartMin.getWidth();
 		sizeHeigth = lineChartMin.getHeight();
 		System.out.println(sizeWidth + "\n" + sizeHeigth);
@@ -219,21 +238,19 @@ public class VueGraphique implements Observer {
 		treeView = new TreeView<>(root);
 		treeView.setShowRoot(false);
 		ContextMenu cm = new ContextMenu();
-		MenuItem transformation = new MenuItem("Transformation");
-		transformation.setOnAction((e) -> {
+		MenuItem traitement = new MenuItem("Traitement");
+		traitement.setOnAction((e) -> {
 			TreeItem<String> ti = treeView.getSelectionModel().getSelectedItem();
 			if (ti == null)
 				return;
 			Stage stage = new Stage();
 			stage.initModality(Modality.APPLICATION_MODAL);
 			try {
-				new VueTransformation(stage, ((SerieGraph) (sgToTi.getByValue(ti))).getSerie());
+				new VueIhmTraitement(stage, ((SerieGraph) (sgToTi.getByValue(ti))).getSerie());
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		});
-		MenuItem analyse = new MenuItem("Analyse");
 		MenuItem exporter = new MenuItem("Exporter");
 		exporter.setOnAction((e) -> {
 			TreeItem<String> ti = treeView.getSelectionModel().getSelectedItem();
@@ -274,7 +291,7 @@ public class VueGraphique implements Observer {
 			TreeItem<String> ti = treeView.getSelectionModel().getSelectedItem();
 			gm.removeSerie((SerieGraph) sgToTi.getByValue(ti));
 		});
-		cm.getItems().addAll(transformation, analyse, exporter, propriete, masquer, supprimer);
+		cm.getItems().addAll(traitement, exporter, propriete, masquer, supprimer);
 		treeView.setContextMenu(cm);
 		treeView.setEditable(true);
 		treeView.setCellFactory(new Callback<TreeView<String>, TreeCell<String>>() {

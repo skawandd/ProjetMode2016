@@ -9,9 +9,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import vues.NumberTextField;
-import vues.VueTransfo;
+import vues.VueTraitement;
 
-public class BoxCox extends VueTransfo{
+public class BoxCox extends VueTraitement{
 
 	public void presenterTransformation() {
 		Label resume = new Label("La transformation de BoxCox stabilise la variance des données selon la formule Yt = (Xt^λ-1)/λ si λ > 0 ou log(Xt) si λ = 0");
@@ -36,7 +36,7 @@ public class BoxCox extends VueTransfo{
 				valider.setDisable(true);
 		});
 		valider.setOnAction( (e)->{
-			transformer(Arrays.asList(Double.parseDouble(ntf.getText())));
+			traiter(Arrays.asList(Double.parseDouble(ntf.getText())));
 		});
 		
 	}

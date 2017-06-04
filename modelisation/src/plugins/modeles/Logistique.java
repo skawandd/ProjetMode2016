@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import modeles.Serie;
-import modeles.Transformation;
+import modeles.Traitement;
 
-public class Logistique extends Transformation{
+public class Logistique extends Traitement{
 
 	/**
 	 * Verifie si une transformation logistique est possible
@@ -24,7 +24,7 @@ public class Logistique extends Transformation{
 	 * Effectue la transformation logistique
 	 * @return La serie resutlat ou null en cas d'erreur
 	 */
-	public Serie transformer(List<Object> l) {
+	public Serie traiter(List<Object> l) {
 		HashMap<Integer, Double> h = new HashMap<>();
 		Double t;
 		if(!checkLogistique(s)) return null;

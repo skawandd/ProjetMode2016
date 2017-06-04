@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import modeles.Serie;
-import modeles.Transformation;
+import modeles.Traitement;
 
-public class Logarithmique extends Transformation{
+public class Logarithmique extends Traitement{
 	
 	/**
 	 * Verifie que la transformation logarithmique est realisable
@@ -23,7 +23,7 @@ public class Logarithmique extends Transformation{
 	 * Effectue la transformation logarithmique
 	 * @return La serie resultat ou null en cas d'erreur
 	 */
-	public Serie transformer(List<Object> l) {
+	public Serie traiter(List<Object> l) {
 		HashMap<Integer, Double> h = new HashMap<>();
 		if(!checkLogarithmique(s)) return null;
 		for(Integer j : entrees.keySet())

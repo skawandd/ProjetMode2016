@@ -7,19 +7,19 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import modeles.Serie;
-import modeles.Transformation;
+import modeles.Traitement;
 import modeles.Updater;
 
-public abstract class VueTransfo extends Observable{
+public abstract class VueTraitement extends Observable{
 	
 	protected VBox vb;
 	protected Button valider;
 	protected Serie s;
 	protected HashMap<Integer, Double> entrees;
 	protected Stage st;
-	private Transformation t;
+	private Traitement t;
 
-	public void setParams(VBox vb, Button valider, Transformation t, Serie s, Stage st){
+	public void setParams(VBox vb, Button valider, Traitement t, Serie s, Stage st){
 		this.vb = vb;
 		this.valider = valider;
 		this.t = t;
@@ -30,8 +30,8 @@ public abstract class VueTransfo extends Observable{
 	
 	public abstract void presenterTransformation();
 	
-	public void transformer(List<Object> l){
-		Serie serie = t.transformer(l);
+	public void traiter(List<Object> l){
+		Serie serie = t.traiter(l);
 		if(serie != null){
 			s.callChanged();
 			s.notifyObservers(serie);

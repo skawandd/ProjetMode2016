@@ -24,19 +24,19 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import modeles.Serie;
-import modeles.Transformation;
+import modeles.Traitement;
 import modeles.Updater;
 
-public class VueTransformation implements Observer{
+public class VueIhmTraitement implements Observer{
 
 	Stage st;
 	Serie s;
 	VBox modulaire;
 	Button valider;
 	
-	VueTransformation(Stage st, Serie s) throws Exception{
-		ArrayList<Transformation> transf = new ArrayList<>();
-		ArrayList<VueTransfo> vueTransf = new ArrayList<>();
+	VueIhmTraitement(Stage st, Serie s) throws Exception{
+		ArrayList<Traitement> transf = new ArrayList<>();
+		ArrayList<VueTraitement> vueTransf = new ArrayList<>();
 		this.st = st;
 		this.s = s;
 		VBox total = new VBox();
@@ -53,9 +53,9 @@ public class VueTransformation implements Observer{
 			String className2 = "plugins.vues."+f.getName().replaceAll(".class", "");
 			Class<?> cls = cl.loadClass(className);
 			Class<?> cls2 = cl.loadClass(className2);
-			Transformation t = (Transformation) cls.newInstance();
+			Traitement t = (Traitement) cls.newInstance();
 			t.setParams(s);
-			VueTransfo vt = (VueTransfo) cls2.newInstance();
+			VueTraitement vt = (VueTraitement) cls2.newInstance();
 			vt.setParams(modulaire, valider, t, s, st);
 			vt.addObserver(this);
 			cb.getItems().add(t.getNom());

@@ -9,9 +9,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import vues.NumberTextField;
-import vues.VueTransfo;
+import vues.VueTraitement;
 
-public class Divide extends VueTransfo{
+public class Divide extends VueTraitement{
 
 	public void presenterTransformation() {
 		
@@ -45,7 +45,7 @@ public class Divide extends VueTransfo{
 		
 		// On transforme en mettant le diviseur dans la liste.
 		valider.setOnAction( (e)->{
-			transformer(Arrays.asList(Integer.parseInt(ntf.getText())));
+			traiter(Arrays.asList(Integer.parseInt(ntf.getText())));
 		});
 	}
 

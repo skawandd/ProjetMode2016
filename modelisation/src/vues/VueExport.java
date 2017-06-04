@@ -3,6 +3,8 @@ package vues;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -97,24 +99,24 @@ public class VueExport {
 		//File f= new File(name+".csv");
 		try {
 			f.createNewFile();
-			System.out.println("je creer un ficher qui sapelle "+ f);
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		System.out.println("je creer un ficher qui sapelle"+ f);
 		HashMap<Integer, Double> serie= new HashMap<Integer, Double>();
 		serie=s.getSerie();
 			
 		try {
 			
+			NumberFormat formatter = new DecimalFormat("#.00000");
 			FileWriter fw = new FileWriter(f);
 			Iterator iterator = serie.entrySet().iterator();
+			fw.append("Cle,Valeur\n");
 			while (iterator.hasNext()) {
 				Map.Entry entry = (Map.Entry) iterator.next();
 				int key = (int) entry.getKey();
 				Double value = (Double) entry.getValue();
-				fw.write(key+","+value+"\n");
+				fw.append(key+","+formatter.format(value).replace(',', '.')+"\n");
 				fw.flush();
 			}
 
