@@ -1,13 +1,8 @@
 package test;
 import java.io.File;
 import java.io.IOException;
-<<<<<<< HEAD
-
-=======
-import static org.junit.Assert.*;
 import org.junit.Test;
 import junit.framework.TestCase;
->>>>>>> 8fa03f0420f9aad87b07d0a2098d59d96b5e133e
 import modeles.Serie;
 import utils.CSVDecoder;
 import utils.Compatibilite;
@@ -15,7 +10,7 @@ import utils.Compatibilite;
 public class TestSerie extends TestCase{
 	
 	
-	public File loadFile(String path){
+	/*public File loadFile(String path){
 		File f = new File(Compatibilite.getPath(path));
 		assertNotSame("Erreur en chargeant le fichier", null, f);
 		return f;
@@ -75,6 +70,6 @@ public class TestSerie extends TestCase{
 		testTransformationMoyMobile();
 		testTransformationMoyMobilePonderee();
 		testTransformationMoyMobilePonderee();
-	}
+	}*/
 
 }

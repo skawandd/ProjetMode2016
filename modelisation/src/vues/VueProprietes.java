@@ -1,6 +1,7 @@
 package vues;
 
 
+import java.util.Observable;
 import java.util.Optional;
 
 import javafx.geometry.Insets;
@@ -19,15 +20,16 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import modeles.GraphModel;
 import modeles.SerieGraph;
+import modeles.Updater;
 
-public class VueProprietes {
+public class VueProprietes{
 
 	// #TODO capacite a renommer, changer la couleur ou supprimer definitivement une serie (supprimer du graph ET de la liste)
 	public VueProprietes(Stage st, GraphModel gm, SerieGraph sg){
 		VBox main = new VBox(20);
 		Label label_nom_serie = new Label("Nom de la série:");
 		Label label_couleur_serie = new Label("Couleur de la série:");
-		TextField nom_serie = new TextField(""+sg.getNameWithOutTypes());
+		TextField nom_serie = new TextField(""+sg.getNom());
 		ColorPicker couleur_serie = new ColorPicker(Color.rgb(sg.getRgb()[0], sg.getRgb()[1], sg.getRgb()[2]));
 		Button valider = new Button("Valider");
 		Button supprimer = new Button("Supprimer");
@@ -52,7 +54,7 @@ public class VueProprietes {
 		
 		valider.setOnAction(f-> {
 			Color c = couleur_serie.getValue();
-			int t[] = {(int)c.getRed(), (int)c.getGreen(), (int)c.getBlue()};
+			int t[] = {(int)(c.getRed()*255), (int)(c.getGreen()*255), (int)(c.getBlue()*255)};
 			sg.setName(nom_serie.getText());
 			sg.setRgb(t);
 			st.close();
@@ -67,7 +69,8 @@ public class VueProprietes {
 
 			Optional<ButtonType> resultat = alert.showAndWait();
 			if (resultat.get() == ButtonType.OK){
-				gm.removeSerie(sg);
+				gm.deleteSerie(sg);
+				st.close();
 			}
 
 		});

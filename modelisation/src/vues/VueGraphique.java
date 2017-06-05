@@ -358,6 +358,14 @@ public class VueGraphique implements Observer {
 		chartMin.remove(sg);
 		updateSerieListe();
 	}
+	
+	/**
+	 * Supprime definitivement une courbe
+	 * @param sg
+	 */
+	public void deleteCourbe(SerieGraph sg){
+		ol.remove(sg.getSerie());
+	}
 
 	/**
 	 * Modifie la visibilite d'une courbe
@@ -385,6 +393,7 @@ public class VueGraphique implements Observer {
 		int[] rgb = sg.getRgb();
 		node.setStyle("-fx-stroke: rgb(" + rgb[0] + ", " + rgb[1] + ", " + rgb[2] + ");");
 		nodeMin.setStyle("-fx-stroke: rgb(" + rgb[0] + ", " + rgb[1] + ", " + rgb[2] + ");");
+		updateSerieListe();
 	}
 	
 	private void select(MouseEvent e) {
@@ -453,6 +462,9 @@ public class VueGraphique implements Observer {
 			break;
 		case "supprimer":
 			this.removeCourbe((SerieGraph) u.getArg());
+			break;
+		case "supprimerDef":
+			this.deleteCourbe((SerieGraph) u.getArg());
 			break;
 		case "visibilite":
 			this.editVisibilite((SerieGraph) u.getArg());
