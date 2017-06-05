@@ -1,1 +1,8 @@
-Incoming
+- Realisation et poursuite du MVC.
+- Tout le package modeles (exceptés calcul d'analyse et de prévision dans Serie fait par Bastien Bordes) 
+- Vue du graphique (et menu sur le côté à gauche), système d'onglet, Vue traitement et autres ... (export en png ...)
+- Réalisation du système du plugins et de tout les modèles et vues associés.
+- Participation de la fonctionnalité zoom (avec Dylan Skawand)
+- vidéo de présentation
+- UML
+- rendu jalon 1, 2 & 3
