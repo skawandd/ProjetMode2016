@@ -76,6 +76,11 @@ public class GraphModel extends Observable implements Observer{
 		this.release(new Updater("supprimer", sg));
 	}
 	
+	public void deleteSerie(SerieGraph sg){
+		removeSerie(sg);
+		this.release(new Updater("supprimerDef", sg));
+	}
+	
 	/**
 	 * Verifie que la serie ne porte pas le meme nom qu'une autre deja presente sur le graph
 	 * @param sg
@@ -145,9 +150,6 @@ public class GraphModel extends Observable implements Observer{
 		
 		series = futureSeries;
 		
-		for(SerieGraph s : series){
-			System.out.println(s.getNom());
-		}
 	}
 
 	

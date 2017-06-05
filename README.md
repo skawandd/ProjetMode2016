@@ -5,7 +5,8 @@ Résumé des fonctionnalités implémentées/non implémentées :
 		- Charger des données/Importer une série : Oui depuis un csv, non depuis un serveur web
 		- Exporter une série
 		- Exporter un graphique en png
-		- Afficher des courbes
+		- Afficher/Renommer des courbes
+		- Changer la couleur d'une courbe
 		- Système parent/enfant des séries
 		- Renommer/Ajouter/Supprimer un graphique
 		- Zoomer sur le graphique
@@ -28,6 +29,7 @@ Résumé des fonctionnalités implémentées/non implémentées :
 		Seul les classes les plus importantes ont été représenté pour garder un UML assez clair et compréhensif.
 		- Quelques tests présent dans src > test > TestSerie.java ...
 		- MVC largement utilisé.
+
 
 Le système de plugins :
 
